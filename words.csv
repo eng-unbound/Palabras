@@ -1,0 +1,149 @@
+topic_id,topic_es,topic_ru,topic_emoji,added,es,ru,image
+granja,La granja,Ферма,🐄,2026-11-22,gallina,курица,🐔
+granja,La granja,Ферма,🐄,2026-11-22,gallo,петух,🐓
+granja,La granja,Ферма,🐄,2026-11-22,conejo,кролик,🐇
+granja,La granja,Ферма,🐄,2026-11-22,toro,бык,🐂
+granja,La granja,Ферма,🐄,2026-11-22,vaca,корова,🐄
+granja,La granja,Ферма,🐄,2026-11-22,pato,утка,🦆
+granja,La granja,Ферма,🐄,2026-11-22,caballo,лошадь,🐎
+granja,La granja,Ферма,🐄,2026-11-22,cabra,коза,🐐
+granja,La granja,Ферма,🐄,2026-11-22,pavo,индюк,🦃
+granja,La granja,Ферма,🐄,2026-11-22,cerdo,свинья,🐖
+bichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,caracol,улитка,🐌
+bichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,rana,лягушка,🐸
+bichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,lagartija,ящерица,🦎
+bichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,libélula,стрекоза,svg:libelula
+bichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,mariposa,бабочка,🦋
+bichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,araña,паук,🕷️
+bichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,avispa,оса,svg:avispa
+bichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,mosca,муха,🪰
+bichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,mosquito,комар,🦟
+bichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,hormiga,муравей,🐜
+animales,Animales,Животные,🦁,2026-11-22,gato,кот,🐈
+animales,Animales,Животные,🦁,2026-11-22,perro,собака,🐕
+animales,Animales,Животные,🦁,2026-11-22,pájaro,птица,🐦
+animales,Animales,Животные,🦁,2026-11-22,cigüeña,аист,svg:ciguena
+animales,Animales,Животные,🦁,2026-11-22,ardilla,белка,🐿️
+animales,Animales,Животные,🦁,2026-11-22,mono,обезьяна,🐒
+animales,Animales,Животные,🦁,2026-11-22,burro,осёл,svg:burro
+animales,Animales,Животные,🦁,2026-11-22,león,лев,🦁
+animales,Animales,Животные,🦁,2026-11-22,foca,тюлень,🦭
+animales,Animales,Животные,🦁,2026-11-22,oso,медведь,🐻
+animales,Animales,Животные,🦁,2026-11-22,pingüino,пингвин,🐧
+animales,Animales,Животные,🦁,2026-11-22,cebra,зебра,🦓
+animales,Animales,Животные,🦁,2026-11-22,serpiente,змея,🐍
+animales,Animales,Животные,🦁,2026-11-22,canguro,кенгуру,🦘
+animales,Animales,Животные,🦁,2026-11-22,pez,рыба,🐟
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,uva,виноград,🍇
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,pera,груша,🍐
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,coco,кокос,🥥
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,cereza,вишня,🍒
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,sandía,арбуз,🍉
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,limón,лимон,🍋
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,manzana,яблоко,🍎
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,plátano,банан,🍌
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,naranja,апельсин,🍊
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,almendra,миндаль,svg:almendra
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,higo,инжир,svg:higo
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,melocotón,персик,🍑
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,piña,ананас,🍍
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,dátil,финик,svg:datil
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,fresa,клубника,🍓
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,melón,дыня,🍈
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,pepino,огурец,🥒
+frutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,frambuesa,малина,svg:frambuesa
+comida,La comida,Еда,🥘,2026-11-22,carne,мясо,🥩
+comida,La comida,Еда,🥘,2026-11-22,acelga,мангольд,svg:acelga
+comida,La comida,Еда,🥘,2026-11-22,chocolate,шоколад,🍫
+comida,La comida,Еда,🥘,2026-11-22,queso,сыр,🧀
+comida,La comida,Еда,🥘,2026-11-22,aceite,растительное масло,svg:aceite
+comida,La comida,Еда,🥘,2026-11-22,pescado,рыба (блюдо),svg:pescado
+comida,La comida,Еда,🥘,2026-11-22,pollo,курица (блюдо),🍗
+comida,La comida,Еда,🥘,2026-11-22,sopa,суп,🥣
+comida,La comida,Еда,🥘,2026-11-22,huevo,яйцо,🥚
+comida,La comida,Еда,🥘,2026-11-22,sal,соль,🧂
+comida,La comida,Еда,🥘,2026-11-22,arroz,рис,🍚
+comida,La comida,Еда,🥘,2026-11-22,harina,мука,svg:harina
+comida,La comida,Еда,🥘,2026-11-22,pan,хлеб,🥖
+comida,La comida,Еда,🥘,2026-11-22,galletas,печенье,🍪
+comida,La comida,Еда,🥘,2026-11-22,bocadillo,бутерброд,🥪
+comida,La comida,Еда,🥘,2026-11-22,cebolla,лук,🧅
+comida,La comida,Еда,🥘,2026-11-22,ensalada,салат,🥗
+comida,La comida,Еда,🥘,2026-11-22,espagueti,спагетти,🍝
+comida,La comida,Еда,🥘,2026-11-22,flan,флан,🍮
+comida,La comida,Еда,🥘,2026-11-22,gamba,креветка,🦐
+comida,La comida,Еда,🥘,2026-11-22,guisante,горох,svg:guisante
+comida,La comida,Еда,🥘,2026-11-22,helado,мороженое,🍦
+comida,La comida,Еда,🥘,2026-11-22,judía,фасоль,svg:judia
+comida,La comida,Еда,🥘,2026-11-22,maíz,кукуруза,🌽
+comida,La comida,Еда,🥘,2026-11-22,macarrones,макароны,svg:macarrones
+profesiones,Profesiones,Профессии,👷,2026-11-22,albañil,строитель,👷+🧱
+profesiones,Profesiones,Профессии,👷,2026-11-22,fontanero,сантехник,🧑‍🔧+🚿
+profesiones,Profesiones,Профессии,👷,2026-11-22,mecánico,механик,🧑‍🔧+🚗
+profesiones,Profesiones,Профессии,👷,2026-11-22,electricista,электрик,🧑‍🔧+💡
+profesiones,Profesiones,Профессии,👷,2026-11-22,cartero,почтальон,🧑+✉️
+profesiones,Profesiones,Профессии,👷,2026-11-22,bombero,пожарный,🧑‍🚒
+profesiones,Profesiones,Профессии,👷,2026-11-22,pintor,маляр,🧑+🖌️
+profesiones,Profesiones,Профессии,👷,2026-11-22,cocinera,повар,👩‍🍳
+profesiones,Profesiones,Профессии,👷,2026-11-22,camarero,официант,🤵+🍽️
+profesiones,Profesiones,Профессии,👷,2026-11-22,profesor,учитель,🧑‍🏫
+profesiones,Profesiones,Профессии,👷,2026-11-22,dentista,стоматолог,🧑‍⚕️+🦷
+profesiones,Profesiones,Профессии,👷,2026-11-22,enfermera,медсестра,👩‍⚕️+💉
+profesiones,Profesiones,Профессии,👷,2026-11-22,médico,врач,🧑‍⚕️+🩺
+profesiones,Profesiones,Профессии,👷,2026-11-22,dependienta,продавщица,👩‍💼+🛒
+profesiones,Profesiones,Профессии,👷,2026-11-22,peluquera,парикмахер,👩+✂️
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,grifo,кран,🚰
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,alicates,плоскогубцы,svg:alicates
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,llave,гаечный ключ,🔧
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,sacacorchos,штопор,svg:sacacorchos
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,pastillas,таблетки,💊
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,cazuela,кастрюля,svg:cazuela
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,paleta,мастерок,svg:paleta
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,martillo,молоток,🔨
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,destornillador,отвёртка,🪛
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,secador,фен,svg:secador
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,carretilla,тачка,svg:carretilla
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,algodón,вата,svg:algodon
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,copa,бокал,🍷
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,rodillo-brocha,валик и кисть,svg:rodillo
+objetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,termómetro,термометр,🌡️
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,boca,рот,👄
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,oreja,ухо,👂
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,nariz,нос,👃
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,dientes,зубы,🦷
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,ojo,глаз,👁️
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,cabeza,голова,fig:cabeza
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,cara,лицо,head:cara
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,cuello,шея,fig:cuello
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,pelo,волосы,head:pelo
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,lengua,язык,👅
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,mano,кисть руки,fig:mano
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,brazo,рука,fig:brazo
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,codo,локоть,fig:codo
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,hombro,плечо,fig:hombro
+cuerpo,El cuerpo,Тело,🧍,2026-11-22,pie,ступня,fig:pie
+ropa,La ropa,Одежда,👕,2026-11-22,chaqueta,куртка,🧥
+ropa,La ropa,Одежда,👕,2026-11-22,camiseta,футболка,👕
+ropa,La ropa,Одежда,👕,2026-11-22,camisa,рубашка,👔
+ropa,La ropa,Одежда,👕,2026-11-22,cordones,шнурки,svg:cordones
+ropa,La ropa,Одежда,👕,2026-11-22,cremallera,молния,svg:cremallera
+ropa,La ropa,Одежда,👕,2026-11-22,calcetines,носки,🧦
+ropa,La ropa,Одежда,👕,2026-11-22,botas,сапоги,👢
+ropa,La ropa,Одежда,👕,2026-11-22,anorac,анорак,svg:anorac
+ropa,La ropa,Одежда,👕,2026-11-22,bañador,купальник,🩱
+ropa,La ropa,Одежда,👕,2026-11-22,botón,пуговица,svg:boton
+ropa,La ropa,Одежда,👕,2026-11-22,sandalias,сандалии,👡
+ropa,La ropa,Одежда,👕,2026-11-22,guantes,перчатки,🧤
+ropa,La ropa,Одежда,👕,2026-11-22,zapatos,туфли,👞
+ropa,La ropa,Одежда,👕,2026-11-22,gorro,шапка,svg:gorro
+ropa,La ropa,Одежда,👕,2026-11-22,gafas,очки,👓
+ropa,La ropa,Одежда,👕,2026-11-22,sombrero,шляпа,👒
+ropa,La ropa,Одежда,👕,2026-11-22,percha,вешалка,svg:percha
+ropa,La ropa,Одежда,👕,2026-11-22,vestirse,одеваться,🧍+👕
+ropa,La ropa,Одежда,👕,2026-11-22,pantalones,брюки,👖
+ropa,La ropa,Одежда,👕,2026-11-22,falda,юбка,svg:falda
+ropa,La ropa,Одежда,👕,2026-11-22,cinturón,ремень,svg:cinturon
+ropa,La ropa,Одежда,👕,2026-11-22,delantal,фартук,svg:delantal
+ropa,La ropa,Одежда,👕,2026-11-22,hebilla,пряжка,svg:hebilla
+ropa,La ropa,Одежда,👕,2026-11-22,tirantes,подтяжки,svg:tirantes
+ropa,La ropa,Одежда,👕,2026-11-22,abrochar,застёгивать,svg:abrochar

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>¡Palabras! Испанский</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: тёплый игровой тренажёр в духе Drops — спокойный, тактильный
+   IDEA: стеклянные карточки, плавающие над бирюзовым морем
+   PICTURE: сама игра — капля со словом и четыре карточки-картинки
+   COLOUR and TYPE: бирюзовый градиент, белое стекло, зелёный/коралловый отклик; Fredoka + Nunito
+   LAYOUT: шапка, центральная арена фиксированного комфортного размера, панель листания */
+:root{color-scheme:light dark;
+ --g1:light-dark(#1cc8b4,#0d5e66);--g2:light-dark(#0b8fb3,#062f45);--g3:light-dark(#3fe0b0,#0b4d47);
+ --glass:rgba(255,255,255,.17);--glass2:rgba(255,255,255,.3);--edge:rgba(255,255,255,.42);
+ --ok:#2fdc8a;--bad:#ff5d6c;--ink:#fff;--deep:#063b4a;
+ --fd:Fredoka,Nunito,system-ui,sans-serif;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;color:var(--ink);font:16px/1.4 Nunito,system-ui,sans-serif;overflow:hidden;
+ background:radial-gradient(120% 70% at 15% 0%,rgba(255,255,255,.22),transparent 60%),radial-gradient(90% 60% at 100% 100%,rgba(0,40,80,.25),transparent 70%),linear-gradient(165deg,var(--g3),var(--g1) 45%,var(--g2));background-attachment:fixed}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.glass{background:var(--glass);border:1px solid var(--edge);border-radius:26px;backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);box-shadow:0 12px 32px rgba(0,40,60,.18),inset 0 1px 0 rgba(255,255,255,.45)}
+.btn{min-height:44px;padding:10px 18px;border-radius:999px;background:var(--glass2);border:1px solid var(--edge);font-weight:800;transition:transform .15s,background .2s;white-space:nowrap}
+.btn:hover{background:rgba(255,255,255,.4)}.btn:active{transform:scale(.96)}
+.btn.solid{background:#fff;color:var(--deep);border-color:#fff}
+.btn[disabled]{opacity:.4;pointer-events:none}
+#app{height:100dvh;display:flex;flex-direction:column;padding:calc(var(--sat) + 8px) 12px calc(var(--sab) + 8px)}
+/* шапка */
+.bar{display:flex;align-items:center;gap:8px;min-height:52px;padding:6px;max-width:1100px;width:100%;margin:0 auto}
+.brand{font:700 26px/1 var(--fd);letter-spacing:.2px;flex:1}
+.brand small{display:block;font:600 13px Nunito,system-ui,sans-serif;opacity:.8;margin-top:4px}
+.seg{display:flex;background:rgba(0,40,60,.18);border-radius:999px;padding:4px;margin:0 auto}
+.seg button{min-height:38px;padding:6px 14px;border-radius:999px;font-weight:800;white-space:nowrap;transition:background .2s,color .2s}
+.seg button[aria-pressed=true]{background:#fff;color:var(--deep)}
+.clock{font:600 18px var(--fd);font-variant-numeric:tabular-nums;min-width:58px;text-align:right}
+.icon{width:44px;height:44px;border-radius:50%;background:var(--glass2);border:1px solid var(--edge);font-size:18px;display:grid;place-items:center;flex:none}
+body:not(.in-topic) .t-only,body.in-topic .home-only{display:none!important}
+main{flex:1;position:relative;min-height:0}
+.view{position:absolute;inset:0;display:none;flex-direction:column;align-items:center}
+.view.on{display:flex;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+.sub{font:600 15px Nunito,system-ui,sans-serif;opacity:.85;text-align:center;margin:2px 0 8px}
+.sub b{font:600 20px var(--fd);display:block;opacity:1}
+/* витрина тем */
+#vTopics{justify-content:space-between}
+.vp{width:100%;max-width:980px;flex:1;overflow:hidden;touch-action:pan-y;min-height:0}
+.track{display:flex;height:100%;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.page{flex:0 0 100%;height:100%;display:grid;gap:14px;padding:6px 6px 10px;grid-template-rows:repeat(3,minmax(0,1fr))}
+@media(min-width:700px){.page{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:18px}}
+.tcard{display:grid;grid-template-columns:auto 1fr;grid-template-rows:1fr auto;gap:10px 14px;padding:14px;overflow:hidden;position:relative}
+.tcard .tart{grid-row:1;width:clamp(56px,16vw,96px);aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;font-size:clamp(32px,9vw,54px);align-self:center}
+.tcard h2{margin:0;font:600 clamp(20px,2.4vw,26px)/1.1 var(--fd)}
+.tcard p{margin:4px 0 0;font-weight:700;opacity:.88;font-size:15px}
+.tcard .meta{font-size:13px;opacity:.75;margin-top:4px}
+.tinfo{align-self:center}
+.prev{display:flex;gap:4px;margin-top:8px}
+.prev .art{width:30px;height:30px;font-size:24px}
+@media(max-height:720px){.prev{display:none}}
+@media(min-width:700px){#vTopics{justify-content:center;gap:6px}.vp{flex:1 1 auto;max-height:760px}.tcard{grid-template-columns:1fr;grid-template-rows:1fr auto auto;justify-items:center;text-align:center;padding:18px}.tcard .tart{width:clamp(72px,11vh,124px);font-size:clamp(40px,6.5vh,72px)}.tinfo{align-self:start}.prev{justify-content:center;gap:8px;margin-top:10px}.prev .art{width:clamp(30px,4vh,44px);height:clamp(30px,4vh,44px);font-size:clamp(24px,3.4vh,36px)}.tbtns{width:100%}}
+.tbtns{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tbtns .btn{padding:8px 10px}
+.new{position:absolute;top:12px;right:12px;background:#fff;color:var(--deep);font:800 11px Nunito,system-ui,sans-serif;padding:3px 8px;border-radius:999px}
+.pnav{display:flex;align-items:center;gap:10px;justify-content:center;padding:6px 0 2px;width:100%;max-width:560px}
+.dots{display:flex;gap:7px;flex:1;justify-content:center}
+.dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.4);transition:all .3s}
+.dots i.on{background:#fff;width:24px;border-radius:5px}
+/* картинка слова */
+.art{display:grid;place-items:center;line-height:1;position:relative}
+.art .emo{font-size:1em;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;filter:drop-shadow(0 4px 6px rgba(0,40,60,.18))}
+.art svg,.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(0,40,60,.18))}
+.art .badge{position:absolute;right:-6%;bottom:-6%;font-size:.48em;background:rgba(255,255,255,.85);border-radius:50%;width:1.25em;height:1.25em;display:grid;place-items:center;box-shadow:0 3px 8px rgba(0,40,60,.2)}
+.art .badge .emo{filter:none}
+.art.dim{opacity:.45}
+/* изучение */
+#vStudy{justify-content:center;gap:12px}
+.scard{width:min(88vw,400px,calc((100dvh - 330px)*.8));aspect-ratio:4/5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:20px;position:relative;cursor:pointer;touch-action:pan-y;user-select:none;container-type:inline-size;min-width:240px}
+.scard .art{width:52cqw;height:52cqw;font-size:42cqw;margin-bottom:5cqw}
+.scard .es{font:700 13cqw/1.1 var(--fd);white-space:nowrap}
+.scard .ru{font-size:6.5cqw;font-weight:700;opacity:.9}
+.speak{position:absolute;top:12px;right:12px}
+.scard.in-l{animation:inl .35s ease}.scard.in-r{animation:inr .35s ease}
+@keyframes inl{from{opacity:0;transform:translateX(-40px) rotate(-3deg)}}
+@keyframes inr{from{opacity:0;transform:translateX(40px) rotate(3deg)}}
+.snav{display:flex;gap:12px;align-items:center}
+.count{font:600 18px var(--fd);min-width:70px;text-align:center;font-variant-numeric:tabular-nums}
+.goTrain.pulse{background:#fff;color:var(--deep);animation:pulse 1.6s ease infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 10px rgba(255,255,255,.18)}}
+/* тренировка */
+#vTrain{justify-content:center;gap:10px}
+.ptop{display:flex;align-items:center;gap:12px;width:min(94vw,600px)}
+.prog{flex:1;height:12px;border-radius:999px;background:rgba(0,40,60,.2);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#b8ffe0,#fff);border-radius:999px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.pc{font:600 16px var(--fd);font-variant-numeric:tabular-nums;white-space:nowrap}
+.arena{position:relative;width:min(94vw,600px,calc((100dvh - 210px)/1.2));aspect-ratio:1/1.2;container-type:size}
+@media(max-aspect-ratio:3/4){.arena{aspect-ratio:auto;height:min(calc(100dvh - 200px),172vw)}}
+.opt{position:absolute;width:47%;height:37%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4cqh;padding:4%;transition:transform .2s,background .25s,box-shadow .25s,border-color .25s}
+.opt:nth-of-type(1){left:0;top:0}.opt:nth-of-type(2){right:0;top:0}.opt:nth-of-type(3){left:0;bottom:0}.opt:nth-of-type(4){right:0;bottom:0}
+.opt .art{width:20cqh;height:20cqh;font-size:17cqh}
+.opt .lbl{font-weight:800;font-size:clamp(13px,4.2cqw,20px);line-height:1.15;text-align:center}
+.opt:hover{background:rgba(255,255,255,.26)}
+.opt.over{transform:scale(1.05);background:rgba(255,255,255,.36);border-color:#fff}
+.opt.good{background:rgba(47,220,138,.55);border-color:#b9ffd9;box-shadow:0 0 0 4px rgba(47,220,138,.5),0 12px 32px rgba(0,60,40,.25)}
+.opt.bad{background:rgba(255,72,96,.88);border-color:#ffd0d5;animation:shake .5s}
+.opt.hint{animation:glow 1.25s ease-in-out 4;background:rgba(47,220,138,.38);border-color:#b9ffd9}
+@keyframes shake{20%,60%{transform:translateX(-9px) rotate(-2deg)}40%,80%{transform:translateX(9px) rotate(2deg)}}
+@keyframes glow{50%{box-shadow:0 0 0 7px rgba(47,220,138,.55),0 0 32px rgba(185,255,217,.8)}}
+.arena.locked .opt,.arena.locked .drop{pointer-events:none}
+.drop{position:absolute;left:50%;top:50%;width:min(40cqw,27cqh);height:min(40cqw,27cqh);border-radius:50%;display:grid;place-items:center;--dx:0px;--dy:0px;--s:1;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(var(--s));background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.65),rgba(255,255,255,.22) 45%,rgba(255,255,255,.12));border:1.5px solid rgba(255,255,255,.7);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 14px 34px rgba(0,40,60,.28),inset 0 -6px 16px rgba(0,60,90,.18);cursor:grab;touch-action:none;user-select:none;z-index:3;animation:bob 3.2s ease-in-out infinite}
+.drop.drag{cursor:grabbing;animation:none;box-shadow:0 22px 44px rgba(0,40,60,.35)}
+.drop.fly{transition:transform .5s cubic-bezier(.5,0,.75,0),opacity .5s;opacity:0}
+.drop.back{transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.drop.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1),bob 3.2s ease-in-out .45s infinite}
+@keyframes bob{50%{translate:0 -7px}}
+@keyframes pop{from{scale:.2;opacity:0}}
+.drop span{font:700 20px var(--fd);white-space:nowrap;display:inline-block;text-shadow:0 1px 2px rgba(0,40,60,.45),0 2px 10px rgba(0,40,60,.35)}
+.hint-t{font-size:14px;opacity:.8;text-align:center;margin:0}
+/* оверлеи */
+.ov{position:fixed;inset:0;z-index:20;display:none;place-items:center;padding:20px;background:rgba(0,30,45,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.ov.on{display:grid;animation:fade .3s}
+.panel{width:min(100%,460px);padding:26px;text-align:center;max-height:calc(100dvh - 40px);overflow:auto;background:rgba(18,140,150,.55)}
+.panel h2{font:700 34px/1.1 var(--fd);margin:0 0 6px}
+.panel .stack-b{display:grid;gap:10px;margin-top:18px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 6px}
+.stats div{background:rgba(255,255,255,.18);border-radius:18px;padding:14px}
+.stats b{display:block;font:700 34px var(--fd);font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.chips span{background:rgba(255,255,255,.22);border-radius:999px;padding:4px 10px;font-weight:700;font-size:14px}
+#dict .panel{text-align:left;width:min(100%,620px)}
+#dict details{background:rgba(255,255,255,.14);border-radius:18px;padding:12px 14px;margin-top:10px}
+#dict summary{font-weight:800;cursor:pointer;min-height:28px}
+#dict label{display:block;font-size:13px;font-weight:700;margin:8px 0 4px;opacity:.9}
+#dict input,#dict textarea{width:100%;font:16px Nunito,system-ui,sans-serif;border-radius:14px;border:1px solid var(--edge);background:rgba(255,255,255,.9);color:#123;padding:10px 12px}
+#dict textarea{min-height:120px;resize:vertical;font-size:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.note{font-size:13px;opacity:.85;margin:8px 0 0}
+.msg{font-weight:800;min-height:22px;margin-top:8px}
+code{background:rgba(0,40,60,.25);padding:1px 5px;border-radius:6px;font-size:13px}
+#gal .panel{width:min(100%,900px);text-align:left}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px;margin-top:12px}
+.gal div{background:rgba(255,255,255,.16);border-radius:16px;padding:10px 6px;text-align:center;font-size:13px;font-weight:700}
+.gal .art{width:56px;height:56px;font-size:46px;margin:0 auto 6px}
+.gal h3{grid-column:1/-1;margin:10px 0 0;font:600 20px var(--fd)}
+.toast{position:fixed;left:50%;bottom:calc(var(--sab) + 24px);transform:translateX(-50%);background:#fff;color:var(--deep);font-weight:800;padding:10px 18px;border-radius:999px;z-index:30;box-shadow:0 10px 30px rgba(0,40,60,.3);opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+body.paused *{animation-play-state:paused!important}
+@media(max-width:520px){.seg .lb,.home-lbl{display:none}.brand{font-size:22px}.brand small{font-size:12px}.bar{gap:6px}.seg button{padding:6px 12px}.pnav .btn{padding:10px 12px}}
+@media(max-width:430px){.ptop .tName{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="app">
+ <header class="bar">
+  <div class="brand home-only">¡Palabras!<small>испанский · Арагон</small></div>
+  <button class="btn home-only" id="bDict">⚙︎ <span class="home-lbl">Словарь</span></button>
+  <button class="btn t-only" id="bBack" aria-label="К темам">← Темы</button>
+  <div class="seg t-only" role="group" aria-label="Режим">
+   <button data-mode="study" aria-pressed="true">📖 <span class="lb">Изучение</span></button>
+   <button data-mode="train" aria-pressed="false">🎯 <span class="lb">Тренировка</span></button>
+  </div>
+  <button class="icon t-only" id="bSound" aria-label="Звук">🔊</button>
+  <button class="icon t-only" id="bPause" aria-label="Пауза"></button>
+  <span class="clock t-only" id="clock">00:00</span>
+ </header>
+ <main>
+  <section class="view" id="vTopics">
+   <p class="sub"><b>Выберите тему</b><span id="tSum"></span></p>
+   <div class="vp" id="vp"><div class="track" id="track"></div></div>
+   <nav class="pnav">
+    <button class="btn" id="pPrev">← Назад</button>
+    <div class="dots" id="dots"></div>
+    <button class="btn" id="pNext">Ещё темы →</button>
+   </nav>
+  </section>
+  <section class="view" id="vStudy">
+   <p class="sub"><b class="tName"></b>Нажмите на карточку, чтобы услышать слово</p>
+   <article class="scard glass" id="scard" tabindex="0" role="button" aria-label="Произнести слово">
+    <button class="icon speak" id="sSpeak" aria-label="Произнести">🔊</button>
+    <div class="art" id="sArt"></div><div class="es" id="sEs"></div><div class="ru" id="sRu"></div>
+   </article>
+   <div class="snav"><button class="btn" id="sPrev">← Назад</button><span class="count" id="sCount"></span><button class="btn" id="sNext">Дальше →</button></div>
+   <button class="btn goTrain" id="sGo">Перейти к тренировке 🎯</button>
+  </section>
+  <section class="view" id="vTrain">
+   <div class="ptop"><b class="tName" style="font:600 18px var(--fd);white-space:nowrap"></b><div class="prog"><i id="prog"></i></div><span class="pc" id="pc"></span></div>
+   <div class="arena" id="arena">
+    <button class="opt glass"></button><button class="opt glass"></button><button class="opt glass"></button><button class="opt glass"></button>
+    <div class="drop" id="drop" role="button" tabindex="0" aria-label="Слово — нажмите, чтобы услышать"><span id="dropT"></span></div>
+   </div>
+   <p class="hint-t">Перетащите слово на картинку или просто нажмите на неё</p>
+  </section>
+ </main>
+</div>
+
+<div class="ov" id="pauseOv"><div class="panel glass"><h2>Пауза</h2><p>Секундомер остановлен.</p><div class="stack-b"><button class="btn solid" id="bResume">▶ Продолжить</button><button class="btn" data-home>← К темам</button></div></div></div>
+
+<div class="ov" id="finOv"><div class="panel glass">
+ <h2>¡Muy bien!</h2><p id="fTopic"></p>
+ <div class="stats"><div><b id="fTime">00:00</b>время</div><div><b id="fAcc">0%</b>с первой попытки</div></div>
+ <div id="fMiss"></div>
+ <div class="stack-b"><button class="btn solid" id="fAgain">🔁 Ещё раз</button><button class="btn" id="fStudy">📖 Повторить слова</button><button class="btn" data-home>← К темам</button></div>
+</div></div>
+
+<div class="ov" id="dict"><div class="panel glass">
+ <h2>Словарь</h2><p class="note" id="dSrc"></p>
+ <details open><summary>Google-таблица по ссылке (CSV)</summary>
+  <label for="dUrl">Ссылка «Опубликовать в интернете → CSV»</label>
+  <input id="dUrl" type="url" placeholder="https://docs.google.com/spreadsheets/d/e/…/pub?output=csv" autocomplete="off">
+  <div class="row"><button class="btn solid" id="dLoad">Загрузить</button><button class="btn" id="dUnlink">Отвязать</button></div>
+  <p class="note">Таблица подгружается при каждом запуске. На claude.ai внешние запросы заблокированы — ссылка работает, когда файл размещён на своём хостинге (GitHub Pages, Netlify) или открыт локально.</p>
+ </details>
+ <details><summary>Вставить CSV или выбрать файл</summary>
+  <textarea id="dCsv" placeholder="topic_id,topic_es,topic_ru,topic_emoji,added,es,ru,image"></textarea>
+  <div class="row"><button class="btn solid" id="dApply">Заменить словарь</button><label class="btn" style="margin:0">📄 Файл…<input type="file" id="dFile" accept=".csv,text/csv,text/plain" hidden></label></div>
+ </details>
+ <details><summary>Быстро добавить тему списком</summary>
+  <label for="qEs">Название темы (исп.)</label><input id="qEs" placeholder="La casa">
+  <label for="qRu">Название (рус.) и эмодзи темы</label>
+  <div class="row" style="margin:0"><input id="qRu" placeholder="Дом" style="flex:3"><input id="qEm" placeholder="🏠" style="flex:1"></div>
+  <label for="qList">Слова, по одному в строке: <code>MESA — стол</code></label>
+  <textarea id="qList" placeholder="MESA — стол&#10;SILLA — стул"></textarea>
+  <div class="row"><button class="btn solid" id="qAdd">Добавить тему</button></div>
+ </details>
+ <p class="msg" id="dMsg" role="status"></p>
+ <div class="row"><button class="btn" id="dCopy">📋 Скопировать CSV</button><button class="btn" id="dGal">🖼 Все картинки</button><button class="btn" id="dReset">↺ Встроенный словарь</button></div>
+ <p class="note">Колонки: <code>topic_id, topic_es, topic_ru, topic_emoji, added, es, ru, image</code>. Темы с более свежей датой <code>added</code> идут первыми. В <code>image</code>: эмодзи, <code>svg:имя</code>, <code>fig:часть</code>, комбинация <code>🧑‍🔧+🚗</code>, путь к файлу <code>img/…webp</code> или ссылка на картинку.</p>
+ <textarea id="dOut" hidden readonly></textarea>
+ <div class="row" style="justify-content:flex-end"><button class="btn solid" id="dClose">Готово</button></div>
+</div></div>
+
+<div class="ov" id="gal"><div class="panel glass"><div class="row" style="justify-content:space-between;align-items:center;margin:0"><h2 style="margin:0">Все картинки</h2><button class="btn solid" id="gClose">Закрыть</button></div><div class="gal" id="galGrid"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+{
+/* ===== Иллюстрации: svg:имя, fig:часть, head:часть ===== */
+const O='#55626b';
+const ln=(d,c,w,cap='round')=>`<path d="${d}" stroke="${c}" stroke-width="${w}" fill="none" stroke-linecap="${cap}" stroke-linejoin="round"/>`;
+const SVG={
+libelula:`<g fill="#d6f3ff" stroke="#4aa3d0" stroke-width="1.6"><ellipse cx="29" cy="34" rx="22" ry="7" transform="rotate(-12 29 34)"/><ellipse cx="71" cy="34" rx="22" ry="7" transform="rotate(12 71 34)"/><ellipse cx="30" cy="46" rx="19" ry="6" transform="rotate(12 30 46)"/><ellipse cx="70" cy="46" rx="19" ry="6" transform="rotate(-12 70 46)"/></g><rect x="46.5" y="38" width="7" height="55" rx="3.5" fill="#16a596"/>${ln('M46.5 52h7M46.5 62h7M46.5 72h7M46.5 82h7','#0d6e64',1.5,'butt')}<ellipse cx="50" cy="38" rx="6.5" ry="9" fill="#12897c"/><circle cx="50" cy="23" r="7.5" fill="#0e6f64"/><circle cx="45.8" cy="21" r="3.4" fill="#8ff7e6"/><circle cx="54.2" cy="21" r="3.4" fill="#8ff7e6"/>`,
+avispa:`${ln('M32 60l-5 13M38 61v14M44 59l5 13','#2b2b2b',2.2)}<ellipse cx="64" cy="54" rx="20" ry="11" fill="#ffc928"/><g fill="#2b2b2b"><rect x="55" y="43.5" width="5" height="21" rx="2"/><rect x="65" y="43" width="5" height="22" rx="2"/><rect x="75" y="46" width="4.5" height="16" rx="2"/><path d="M83 51 L95 55 L83 59Z"/><rect x="40" y="51" width="7" height="5" rx="2"/><ellipse cx="35" cy="53" rx="9" ry="8"/></g><circle cx="35" cy="51" r="2.5" fill="#ffc928"/><circle cx="21" cy="52" r="8.5" fill="#ffc928"/><ellipse cx="18.5" cy="50" rx="3.2" ry="4.4" fill="#2b2b2b"/>${ln('M19 44Q14 34 9 32M24 44Q23 33 19 28','#2b2b2b',2)}<g fill="#e4f6ff" stroke="#7fb6d6" stroke-width="1.5" opacity=".95"><ellipse cx="39" cy="31" rx="8" ry="18" transform="rotate(-28 39 31)"/><ellipse cx="51" cy="32" rx="7" ry="15" transform="rotate(18 51 32)"/></g>`,
+ciguena:`${ln('M50 63L47 93M57 63L61 93','#e8553d',3)}${ln('M41 93h10M55 93h10','#e8553d',2.5)}${ln('M38 52Q31 37 36 22',O,12.5)}${ln('M38 52Q31 37 36 22','#fff',9)}<ellipse cx="54" cy="54" rx="22" ry="12" fill="#fff" stroke="${O}" stroke-width="1.8" transform="rotate(12 54 54)"/><path d="M57 49Q76 50 84 64Q70 66 57 60Z" fill="#26292b"/><circle cx="36" cy="20" r="7.5" fill="#fff" stroke="${O}" stroke-width="1.8"/><path d="M42 17.5L68 27L42 23Z" fill="#e8553d"/><circle cx="35.5" cy="18.5" r="1.7" fill="#222"/>`,
+burro:`<g fill="#80838a"><rect x="30" y="58" width="7" height="31" rx="3"/><rect x="40" y="58" width="7" height="31" rx="3"/><rect x="62" y="58" width="7" height="31" rx="3"/><rect x="72" y="58" width="7" height="31" rx="3"/></g><g fill="#3f3f45"><rect x="30" y="86" width="7" height="5" rx="2"/><rect x="40" y="86" width="7" height="5" rx="2"/><rect x="62" y="86" width="7" height="5" rx="2"/><rect x="72" y="86" width="7" height="5" rx="2"/></g>${ln('M80 46Q90 56 87 70','#80838a',3)}<ellipse cx="87" cy="72" rx="3" ry="5.5" fill="#3f3f45"/><ellipse cx="55" cy="50" rx="28" ry="15" fill="#9a9ca3"/><ellipse cx="55" cy="58" rx="19" ry="6" fill="#c9cbd0"/><path d="M36 47L23 27L34 21L45 42Z" fill="#9a9ca3"/><path d="M26 21L21 1L32 17ZM31 21L34 2L38 20Z" fill="#9a9ca3"/><path d="M26.5 18L23.5 6L30 16Z" fill="#5d5f66"/><ellipse cx="20" cy="31" rx="9" ry="15" transform="rotate(35 20 31)" fill="#9a9ca3"/><ellipse cx="12.5" cy="40" rx="7.5" ry="6.5" fill="#d7d8dc"/><circle cx="10" cy="41" r="1.4" fill="#444"/>${ln('M31 20Q38 30 44 41','#4a4b50',4)}<circle cx="22" cy="27" r="1.9" fill="#222"/>`,
+almendra:`<g transform="rotate(-25 38 52)"><path d="M38 18C54 32 56 68 38 88C20 68 22 32 38 18Z" fill="#c98a4b"/>${ln('M38 27C34 44 34 66 38 80M31 40C30 52 31 64 33 72M45 40C46 52 45 64 43 72','#a96d33',1.6)}</g><g transform="rotate(22 66 54)"><path d="M66 22C80 34 82 66 66 84C50 66 52 34 66 22Z" fill="#d99c5c"/>${ln('M66 30C62 46 62 64 66 77M60 42C59 52 60 62 62 69M72 42C73 52 72 62 70 69','#b47838',1.6)}</g>`,
+higo:`<path d="M36 26C42 26 43 33 46 38C58 46 58 80 36 82C14 80 14 46 26 38C29 33 30 26 36 26Z" fill="#6c3b70"/><ellipse cx="27" cy="57" rx="4" ry="10" fill="#8e5a92"/>${ln('M34 27Q36 19 41 16','#5a8a3a',3.5)}<path d="M68 30C74 30 75 37 78 42C90 50 90 82 68 84C46 82 46 50 58 42C61 37 62 30 68 30Z" fill="#6c3b70"/><path d="M68 35C72 36 73 41 75 45C85 52 85 78 68 79C51 78 51 52 61 45C63 41 64 36 68 35Z" fill="#f7e3c8"/><path d="M68 45C78 52 79 72 68 74C57 72 58 52 68 45Z" fill="#e24d6c"/><g fill="#ffe08a"><circle cx="65" cy="56" r="1.3"/><circle cx="71" cy="58" r="1.3"/><circle cx="66" cy="64" r="1.3"/><circle cx="72" cy="66" r="1.3"/><circle cx="68" cy="70" r="1.3"/><circle cx="63" cy="68" r="1.3"/><circle cx="69" cy="51" r="1.3"/></g>`,
+datil:`<g transform="rotate(-22 30 52)"><ellipse cx="30" cy="52" rx="11" ry="26" fill="#7a3a16"/><ellipse cx="26" cy="42" rx="3" ry="10" fill="#a85a2c"/></g><g transform="rotate(4 54 50)"><ellipse cx="54" cy="50" rx="11.5" ry="27" fill="#8a4519"/><ellipse cx="50" cy="40" rx="3" ry="10" fill="#b8693a"/>${ln('M58 62q-3 6 0 12','#6a3210',1.5)}</g><g transform="rotate(26 76 56)"><ellipse cx="76" cy="56" rx="11" ry="25" fill="#6d3213"/><ellipse cx="72" cy="46" rx="3" ry="9" fill="#9a522a"/></g>`,
+frambuesa:(()=>{let s='';const R=[[30,3],[40,4],[50,5],[60,5],[70,4],[80,3]];for(const [y,n] of R)for(let i=0;i<n;i++){const x=50+(i-(n-1)/2)*11.5;s+=`<circle cx="${x}" cy="${y}" r="7" fill="#d92b5a"/><circle cx="${x-2.2}" cy="${y-2.4}" r="2.2" fill="#ff8aa6"/>`}return `<path d="M50 24L38 14L45 20L42 8L50 17L58 8L55 20L62 14Z" fill="#4c9a3a"/>`+s+`<rect x="48" y="4" width="4" height="10" rx="2" fill="#3d7f22"/>`})(),
+acelga:(()=>{const leaf=(r,st)=>`<g transform="rotate(${r} 50 92)">${ln('M50 92L50 44',st,7)}<path d="M50 64C29 58 27 22 50 9C73 22 71 58 50 64Z" fill="#2f8a3f"/>${ln('M50 62L50 16',st,3)}${ln('M50 28L41 22M50 38L38 32M50 48L39 44M50 28L59 22M50 38L62 32M50 48L61 44','#79c27c',1.5)}</g>`;return leaf(-30,'#d23b54')+leaf(30,'#e9c13a')+leaf(0,'#f4efe0')})(),
+aceite:`<rect x="43.5" y="5" width="13" height="9" rx="2" fill="#2f6d3a"/><rect x="45" y="13" width="10" height="16" fill="#e2f3f1" stroke="#7aa5ad" stroke-width="1.5"/><path d="M45 28C45 34 33 36 33 46L33 86Q33 92 39 92L61 92Q67 92 67 86L67 46C67 36 55 34 55 28Z" fill="#eaf6f4" stroke="#7aa5ad" stroke-width="1.8"/><path d="M34.5 52L65.5 52L65.5 86Q65.5 90.5 61 90.5L39 90.5Q34.5 90.5 34.5 86Z" fill="#d9b72a"/><rect x="38" y="62" width="24" height="17" rx="3" fill="#fff8e1"/><ellipse cx="50" cy="71" rx="5" ry="4" fill="#5d7f2a"/>${ln('M38 40Q38 34 43 32','#fff',2.5)}<path d="M72 78Q80 66 92 68Q84 77 72 78Z" fill="#7aa34a"/><ellipse cx="78" cy="87" rx="6" ry="4.5" fill="#5d7f2a"/><ellipse cx="88" cy="81" rx="5.5" ry="4" fill="#3f5e1c"/>`,
+pescado:`<ellipse cx="50" cy="58" rx="45" ry="27" fill="#f4f7f8" stroke="#9fb0ba" stroke-width="2"/><ellipse cx="50" cy="58" rx="35" ry="19" fill="none" stroke="#d5dde2" stroke-width="2"/><path d="M69 55L86 43L84 55L86 67Z" fill="#c97f2e"/><path d="M20 55C32 39 60 39 71 55C60 70 32 70 20 55Z" fill="#e3a14a"/>${ln('M36 47L32 63M46 45L42 65M56 46L52 64','#9b5a1f',2.5)}<circle cx="27" cy="53" r="2.2" fill="#4a2a10"/><circle cx="34" cy="73" r="7.5" fill="#ffe14d" stroke="#f2c200" stroke-width="2"/>${ln('M34 66v14M27 73h14M29 68l10 10M39 68l-10 10','#f2c200',1)}<g fill="#4c9a3a"><circle cx="64" cy="73" r="3"/><circle cx="68" cy="70" r="3"/><circle cx="69" cy="75" r="3"/></g>`,
+harina:`<path d="M27 28Q25 21 31 19L69 19Q75 21 73 28L80 84Q80 92 72 92L28 92Q20 92 20 84Z" fill="#efe2c4" stroke="#b49a6a" stroke-width="2"/><path d="M31 19Q40 9 50 16Q60 9 69 19Z" fill="#efe2c4" stroke="#b49a6a" stroke-width="2"/>${ln('M29 27L71 27','#b49a6a',3)}${ln('M50 80L50 42','#c9952e',2.5)}<g fill="#d9a83c"><ellipse cx="50" cy="40" rx="3" ry="6"/><ellipse cx="45" cy="49" rx="3" ry="6" transform="rotate(-30 45 49)"/><ellipse cx="55" cy="49" rx="3" ry="6" transform="rotate(30 55 49)"/><ellipse cx="45" cy="59" rx="3" ry="6" transform="rotate(-30 45 59)"/><ellipse cx="55" cy="59" rx="3" ry="6" transform="rotate(30 55 59)"/><ellipse cx="45" cy="69" rx="3" ry="6" transform="rotate(-30 45 69)"/><ellipse cx="55" cy="69" rx="3" ry="6" transform="rotate(30 55 69)"/></g><path d="M4 95Q15 76 30 95Z" fill="#fff" stroke="#c9cfd4" stroke-width="1.5"/>`,
+guisante:`${ln('M10 58Q4 60 4 68','#3d7f22',3)}<path d="M10 58C24 34 70 24 93 33C85 53 44 76 10 58Z" fill="#5cb83a"/><path d="M16 56C30 41 68 33 87 37C79 51 44 67 16 56Z" fill="#a6df7c"/><g fill="#3e9a2a"><circle cx="27" cy="52" r="7.5"/><circle cx="41" cy="47" r="8"/><circle cx="55" cy="43" r="8"/><circle cx="69" cy="40" r="7.5"/><circle cx="81" cy="38" r="5.5"/><circle cx="30" cy="82" r="7.5"/><circle cx="47" cy="86" r="7.5"/><circle cx="63" cy="81" r="6.5"/></g><g fill="#9be26f"><circle cx="25" cy="49.5" r="2.2"/><circle cx="39" cy="44.5" r="2.3"/><circle cx="53" cy="40.5" r="2.3"/><circle cx="67" cy="37.5" r="2.2"/><circle cx="28" cy="79.5" r="2.2"/><circle cx="45" cy="83.5" r="2.2"/><circle cx="61" cy="79" r="2"/></g><path d="M10 58C30 42 72 30 93 33C79 27 38 28 10 58Z" fill="#479f2b"/>`,
+judia:(()=>{const b=(x,y,r,c)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(1.25)"><path d="M0 0C7 -9 22 -7 24 3C25 12 18 14 13 10C9 7 6 12 1 12C-6 10 -6 4 0 0Z" fill="${c}"/><ellipse cx="9" cy="-2" rx="5" ry="2" fill="#fff" opacity=".35"/></g>`;return b(14,40,-15,'#8f2435')+b(46,30,12,'#a33242')+b(10,64,10,'#7a1d2c')+b(40,58,-8,'#a33242')+b(64,52,18,'#8f2435')+b(24,84,-4,'#a33242')+b(52,82,8,'#7a1d2c')})(),
+macarrones:(()=>{const t=(x,y,r)=>`<g transform="translate(${x} ${y}) rotate(${r})"><rect x="-15" y="-6" width="30" height="12" rx="3" fill="#f2c14e"/>${ln('M-9 -6v12M-3 -6v12M3 -6v12M9 -6v12','#dda534',1.3,'butt')}<ellipse cx="15" cy="0" rx="3" ry="6" fill="#c98f1f"/></g>`;return t(30,46,-20)+t(56,40,15)+t(72,52,-35)+t(42,58,30)+t(24,62,5)+t(64,64,10)+t(48,32,-50)+`<path d="M8 58L92 58Q88 92 50 92Q12 92 8 58Z" fill="#4f8fd6"/><ellipse cx="50" cy="58" rx="42" ry="4" fill="#6aa5e6"/>`})(),
+alicates:`${ln('M49 50L29 91','#e0473f',11)}${ln('M51 50L71 91','#2f7fd8',11)}${ln('M50 50L46 11','#8a97a3',9)}${ln('M50 50L54 11','#a9b4be',9)}${ln('M50 16v22','#5f6b75',1.5,'butt')}<circle cx="50" cy="49" r="7.5" fill="#6c7782"/><circle cx="50" cy="49" r="2.6" fill="#cfd6dc"/>`,
+sacacorchos:`<rect x="16" y="9" width="68" height="15" rx="7.5" fill="#a0632e"/><rect x="21" y="11.5" width="58" height="4" rx="2" fill="#c98448"/><rect x="46" y="23" width="8" height="17" fill="#9aa6b0"/>${ln('M50 40c12 3 12 8 0 10c-12 2-12 7 0 10c12 3 12 8 0 10c-12 2-12 7 0 10l0 8','#7d8a95',4.2)}<rect x="68" y="72" width="17" height="21" rx="3" fill="#d6a46b"/><ellipse cx="76.5" cy="72" rx="8.5" ry="3" fill="#e6bd8a"/>`,
+cazuela:`${ln('M38 16q-4-5 0-10M50 14q-4-5 0-10M62 16q-4-5 0-10','#a9bcc8',2)}<rect x="5" y="48" width="18" height="8" rx="4" fill="#3d4a52"/><rect x="77" y="48" width="18" height="8" rx="4" fill="#3d4a52"/><path d="M18 42L82 42L80 80Q80 89 71 89L29 89Q20 89 20 80Z" fill="#e2563f"/><rect x="26" y="48" width="6" height="32" rx="3" fill="#f08a76"/><path d="M15 41Q50 21 85 41Z" fill="#dfe6ea" stroke="#8d9aa3" stroke-width="1.5"/><ellipse cx="50" cy="41" rx="36" ry="5" fill="#c9d2d8" stroke="#8d9aa3" stroke-width="1.5"/><rect x="43" y="23" width="14" height="8" rx="3.5" fill="#3d4a52"/>`,
+paleta:`<rect x="44" y="5" width="12" height="28" rx="6" fill="#b5702f"/><rect x="45" y="31" width="10" height="6" fill="#7d8a95"/>${ln('M50 36V45','#7d8a95',4)}<path d="M21 45L79 45L50 95Z" fill="#b9c4cc" stroke="#7d8a95" stroke-width="2.2" stroke-linejoin="round"/><path d="M37 58Q50 50 63 58Q57 67 50 64Q42 67 37 58Z" fill="#c9b8a0"/><path d="M30 49L45 49L41 57Z" fill="#e3e9ed"/>`,
+secador:`${ln('M34 50L28 85','#3d4a52',13)}${ln('M28 90Q30 97 42 95','#3d4a52',2)}<rect x="12" y="22" width="58" height="29" rx="14.5" fill="#ff7aa8"/><path d="M68 28L87 30L87 43L68 45Z" fill="#e05588"/><circle cx="25" cy="36.5" r="8.5" fill="#e05588"/><circle cx="25" cy="36.5" r="4" fill="#3d4a52"/><rect x="28" y="57" width="5" height="10" rx="2" fill="#ffd34d"/>${ln('M90 29q4 3 8 0M90 37q4 3 8 0M90 45q4 3 8 0','#5fb8f5',2.5)}`,
+carretilla:`${ln('M28 72L93 44','#5a4632',4.5)}${ln('M66 58L66 86','#5a4632',4.5)}<path d="M12 38L78 38L67 64L29 64Z" fill="#3fa34d"/><path d="M12 38L78 38L76 44L14 44Z" fill="#2f8a3f"/><path d="M22 38Q40 26 62 38Z" fill="#c9a064"/><circle cx="28" cy="76" r="13" fill="#2d2f33"/><circle cx="28" cy="76" r="5" fill="#c9d2d8"/>`,
+algodon:(()=>{const C=[[44,38,10],[54,33,11],[57,44,10],[26,63,12],[38,55,13],[42,67,12],[31,71,11],[59,59,12],[71,55,12],[77,67,11],[64,71,12]];return `<g fill="#9fb3c0">${C.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r+2}"/>`).join('')}</g><g fill="#fff">${C.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}"/>`).join('')}</g><g fill="#e3eef5"><circle cx="40" cy="70" r="5"/><circle cx="73" cy="70" r="5"/><circle cx="57" cy="46" r="4"/></g>`})(),
+rodillo:`${ln('M58 22L66 22L66 37L45 45L45 58','#7d8a95',3.5)}<rect x="8" y="11" width="52" height="22" rx="9" fill="#4f8fd6"/><rect x="12" y="14" width="44" height="5" rx="2.5" fill="#7fb1ea"/><rect x="40.5" y="57" width="9" height="34" rx="4.5" fill="#f2c14e"/><g transform="rotate(24 76 62)"><rect x="72" y="60" width="8" height="34" rx="4" fill="#b5702f"/><rect x="67" y="49" width="18" height="12" rx="2" fill="#a9b4be"/><path d="M67 49L67 33L85 33L85 49Z" fill="#e8d3a8"/><path d="M67 34Q76 25 85 34Z" fill="#4f8fd6"/></g>`,
+cordones:`<path d="M8 70L92 70Q94 83 84 83L14 83Q6 83 8 70Z" fill="#f4f7f8" stroke="#9fb0ba" stroke-width="2"/><path d="M10 70Q10 52 26 46L48 33Q56 29 60 37L66 50Q82 54 90 64L92 70Z" fill="#7d8fa0"/><path d="M34 42L55 32L65 50L42 59Z" fill="#a3b3c2"/>${ln('M36 44L58 42M54 36L39 49M39 49L62 48M58 42L42 54','#ff7a2f',3.2)}${ln('M47 38q-12-12-16-2q6 5 16 2q2-14 14-9q-3 8-14 9M47 38Q42 48 36 52M47 38Q54 46 62 44','#ff7a2f',3)}`,
+cremallera:(()=>{let s='<path d="M8 6L47 6L47 50L31 95L8 95Z" fill="#4f8fd6"/><path d="M53 6L92 6L92 95L69 95L53 50Z" fill="#3f7cc4"/>';for(let y=8;y<46;y+=4.5){s+=`<rect x="${y%9<4.5?44:50}" y="${y}" width="6" height="3" rx="1" fill="#c9d2d8"/>`}for(let i=0;i<8;i++){const t=i/7,y=60+t*32;s+=`<rect x="${45-t*14}" y="${y}" width="5" height="3" rx="1" fill="#c9d2d8" transform="rotate(20 ${47-t*14} ${y})"/><rect x="${50+t*14}" y="${y+2}" width="5" height="3" rx="1" fill="#c9d2d8" transform="rotate(-20 ${52+t*14} ${y+2})"/>`}return s+'<path d="M42 45L58 45L56 58L44 58Z" fill="#dfe6ea" stroke="#7d8a95" stroke-width="1.5"/><rect x="46" y="57" width="8" height="19" rx="3" fill="#b9c4cc" stroke="#7d8a95" stroke-width="1.5"/><rect x="48.5" y="66" width="3" height="6" rx="1.5" fill="#7d8a95"/>'})(),
+anorac:`<path d="M26 30L11 76L22 80L31 50Z" fill="#e8742a"/><path d="M74 30L89 76L78 80L69 50Z" fill="#e8742a"/><rect x="9.5" y="73" width="13" height="7" rx="2" transform="rotate(18 16 76)" fill="#b85a1d"/><rect x="77.5" y="73" width="13" height="7" rx="2" transform="rotate(-18 84 76)" fill="#b85a1d"/><path d="M33 25L67 25L75 31L77 91L23 91L25 31Z" fill="#ff8a3d"/><rect x="23" y="84" width="54" height="7" fill="#e8742a"/><path d="M35 63L65 63L61 79L39 79Z" fill="#e8742a"/><path d="M35 26Q50 0 65 26L61 31L39 31Z" fill="#e8742a"/><path d="M41 26Q50 11 59 26L56 31L44 31Z" fill="#7a3a12"/>${ln('M50 31V91','#3d4a52',2,'butt')}${ln('M45 31L44 43M55 31L56 43','#fff',2)}`,
+boton:`<circle cx="50" cy="50" r="39" fill="#e2563f"/><circle cx="50" cy="50" r="30" fill="#f06a52" stroke="#c4412d" stroke-width="3"/><g fill="#7a2216"><circle cx="41" cy="41" r="5"/><circle cx="59" cy="41" r="5"/><circle cx="41" cy="59" r="5"/><circle cx="59" cy="59" r="5"/></g>${ln('M41 41L59 59M59 41L41 59','#fff3c4',3)}${ln('M22 40Q28 22 46 17','#ff9c88',4)}`,
+gorro:`<path d="M17 66Q17 22 50 22Q83 22 83 66Z" fill="#3fa3c4"/>${ln('M34 28Q29 46 29 66M50 22V66M66 28Q71 46 71 66','#2f88a8',2)}<rect x="13" y="62" width="74" height="21" rx="7" fill="#2f88a8"/>${ln('M21 64v17M28 64v17M35 64v17M42 64v17M49 64v17M56 64v17M63 64v17M70 64v17M77 64v17','#267390',2,'butt')}<circle cx="50" cy="16" r="11" fill="#f4f7f8" stroke="#c9d2d8" stroke-width="2"/>`,
+percha:`${ln('M50 36V27C50 17 63 15 64 24C65 30 58 31 57 28','#7d8a95',4)}<path d="M50 36L10 70Q5 77 14 77L86 77Q95 77 90 70Z" fill="none" stroke="#b5702f" stroke-width="6.5" stroke-linejoin="round"/>`,
+falda:`<rect x="30" y="16" width="40" height="11" rx="3" fill="#c23b6e"/><circle cx="62" cy="21.5" r="2.4" fill="#ffd1e0"/><path d="M31 27L69 27L89 82Q50 93 11 82Z" fill="#e8558a"/>${ln('M40 27L31 86M50 27L50 89M60 27L69 86','#c23b6e',2,'butt')}`,
+cinturon:`<ellipse cx="50" cy="52" rx="38" ry="23" fill="none" stroke="#8b5a2b" stroke-width="11"/><ellipse cx="50" cy="52" rx="38" ry="23" fill="none" stroke="#c58b4f" stroke-width="1.5" stroke-dasharray="3 3"/><path d="M62 75Q76 74 84 84" stroke="#8b5a2b" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="74" cy="78" r="1.8" fill="#4a2e14"/><rect x="37" y="64" width="24" height="22" rx="4" fill="none" stroke="#e0b12f" stroke-width="4.5"/>${ln('M40 75H59','#c9961a',3)}`,
+delantal:`${ln('M37 22Q50 0 63 22','#3d4a52',3)}${ln('M24 47Q12 50 5 60M24 47Q13 45 7 49M76 47Q88 50 95 60M76 47Q87 45 93 49','#3d4a52',3)}<path d="M35 20L65 20L65 40Q67 44 77 46L81 90Q50 97 19 90L23 46Q33 44 35 40Z" fill="#e2563f"/><rect x="38" y="57" width="24" height="17" rx="3" fill="#f6a08f"/>${ln('M38 61H62','#e2563f',1.5,'butt')}`,
+hebilla:`<rect x="3" y="38" width="44" height="24" rx="2" fill="#8b5a2b"/><rect x="29" y="23" width="36" height="54" rx="9" fill="none" stroke="#e0b12f" stroke-width="7.5"/><rect x="50" y="38" width="47" height="24" rx="2" fill="#9b6634"/>${ln('M53 41H97M53 59H97','#c58b4f',1.4,'butt')}<circle cx="76" cy="50" r="3" fill="#4a2e14"/><circle cx="88" cy="50" r="3" fill="#4a2e14"/>${ln('M33 50H66','#c9961a',4.5)}${ln('M33 30Q34 26 40 26','#fff2b8',2.5)}`,
+tirantes:`<path d="M23 72L28 18Q50 7 72 18L77 72Z" fill="#f4f7f8" stroke="#9fb0ba" stroke-width="2"/><path d="M15 70L85 70L88 97L12 97Z" fill="#4f6fa3"/><rect x="14" y="66" width="72" height="8" fill="#3f5c8c"/>${ln('M29 64L39 12M71 64L61 12','#e2563f',9,'butt')}<rect x="23" y="60" width="11" height="11" rx="2" fill="#dfe6ea" stroke="#7d8a95" stroke-width="1.5"/><rect x="66" y="60" width="11" height="11" rx="2" fill="#dfe6ea" stroke="#7d8a95" stroke-width="1.5"/>`,
+abrochar:`<rect x="8" y="8" width="62" height="86" rx="4" fill="#7aa5d6"/><path d="M44 8L92 8L92 94L67 94L61 64L44 60Z" fill="#a9c7ea"/>${ln('M44 8V60','#8fb3dc',2,'butt')}<g fill="#fff" stroke="#55626b" stroke-width="1.5"><circle cx="52" cy="22" r="5"/><circle cx="52" cy="42" r="5"/><circle cx="53" cy="79" r="5.5"/></g>${ln('M64 76L67 86','#55626b',3)}${ln('M56 89Q63 98 71 88','#e2563f',3)}<path d="M66 85L74 85L71 92Z" fill="#e2563f"/>`
+};
+/* Фигура человека с подсвеченной частью тела */
+function figure(p){
+  const B='#e7eef3',H='#ff5a4f',o='#7a8a95',c=k=>k===p?H:B;
+  const L=(d,w,k)=>`<path d="${d}" stroke="${o}" stroke-width="${w+3}" stroke-linecap="round" fill="none"/><path d="${d}" stroke="${c(k)}" stroke-width="${w}" stroke-linecap="round" fill="none"/>`;
+  const C=(x,y,r,k)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c(k)}" stroke="${o}" stroke-width="1.5"/>`;
+  return L('M42 66L41 87',10,'pierna')+L('M58 66L59 87',10,'pierna')
+   +`<ellipse cx="38" cy="91.5" rx="8" ry="4.5" fill="${c('pie')}" stroke="${o}" stroke-width="1.5"/><ellipse cx="62" cy="91.5" rx="8" ry="4.5" fill="${c('pie')}" stroke="${o}" stroke-width="1.5"/>`
+   +`<path d="M32 37Q50 33 68 37L64 67L36 67Z" fill="${B}" stroke="${o}" stroke-width="1.5" stroke-linejoin="round"/>`
+   +L('M32 40L25 56',8,'brazo')+L('M68 40L75 56',8,'brazo')+L('M25 56L22 72',7,'brazo')+L('M75 56L78 72',7,'brazo')
+   +C(25,56,p==='codo'?6:4,p==='brazo'?'brazo':'codo')+C(75,56,p==='codo'?6:4,p==='brazo'?'brazo':'codo')
+   +C(21.5,77,p==='mano'?6.5:5,'mano')+C(78.5,77,p==='mano'?6.5:5,'mano')
+   +C(33,39,p==='hombro'?7.5:5.5,'hombro')+C(67,39,p==='hombro'?7.5:5.5,'hombro')
+   +`<rect x="44.5" y="26" width="11" height="10" rx="2" fill="${c('cuello')}" stroke="${o}" stroke-width="1.5"/>`
+   +C(50,16,11,'cabeza');
+}
+/* Голова крупно: подсветка лица или волос */
+function headZoom(p){
+  const B='#e7eef3',H='#ff5a4f',o='#7a8a95',c=k=>k===p?H:B;
+  return `<rect x="40" y="80" width="20" height="18" fill="${B}" stroke="${o}" stroke-width="1.8"/><circle cx="22" cy="54" r="7" fill="${B}" stroke="${o}" stroke-width="1.8"/><circle cx="78" cy="54" r="7" fill="${B}" stroke="${o}" stroke-width="1.8"/><ellipse cx="50" cy="54" rx="27" ry="31" fill="${c('cara')}" stroke="${o}" stroke-width="1.8"/><path d="M21 50Q18 12 50 10Q82 12 79 50Q73 29 50 27Q27 29 21 50Z" fill="${c('pelo')}" stroke="${o}" stroke-width="1.8" stroke-linejoin="round"/><circle cx="40" cy="52" r="3.2" fill="#33414a"/><circle cx="60" cy="52" r="3.2" fill="#33414a"/><path d="M50 56Q46 64 51 66" stroke="#33414a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M41 73Q50 79 59 73" stroke="#33414a" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+}
+
+const IC={pause:'<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.6" height="12" rx="1.2" fill="currentColor"/><rect x="9.4" y="2" width="3.6" height="12" rx="1.2" fill="currentColor"/></svg>',play:'<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg>'};
+const CONFIG={CSV_URL:'words.csv'}; // словарь рядом с сайтом; можно заменить ссылкой на опубликованную Google-таблицу (CSV)
+const BUILTIN="topic_id,topic_es,topic_ru,topic_emoji,added,es,ru,image\ngranja,La granja,Ферма,🐄,2026-11-22,gallina,курица,🐔\ngranja,La granja,Ферма,🐄,2026-11-22,gallo,петух,🐓\ngranja,La granja,Ферма,🐄,2026-11-22,conejo,кролик,🐇\ngranja,La granja,Ферма,🐄,2026-11-22,toro,бык,🐂\ngranja,La granja,Ферма,🐄,2026-11-22,vaca,корова,🐄\ngranja,La granja,Ферма,🐄,2026-11-22,pato,утка,🦆\ngranja,La granja,Ферма,🐄,2026-11-22,caballo,лошадь,🐎\ngranja,La granja,Ферма,🐄,2026-11-22,cabra,коза,🐐\ngranja,La granja,Ферма,🐄,2026-11-22,pavo,индюк,🦃\ngranja,La granja,Ферма,🐄,2026-11-22,cerdo,свинья,🐖\nbichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,caracol,улитка,🐌\nbichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,rana,лягушка,🐸\nbichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,lagartija,ящерица,🦎\nbichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,libélula,стрекоза,svg:libelula\nbichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,mariposa,бабочка,🦋\nbichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,araña,паук,🕷️\nbichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,avispa,оса,svg:avispa\nbichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,mosca,муха,🪰\nbichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,mosquito,комар,🦟\nbichos,Bichos,Мелкие животные и насекомые,🐌,2026-11-22,hormiga,муравей,🐜\nanimales,Animales,Животные,🦁,2026-11-22,gato,кот,🐈\nanimales,Animales,Животные,🦁,2026-11-22,perro,собака,🐕\nanimales,Animales,Животные,🦁,2026-11-22,pájaro,птица,🐦\nanimales,Animales,Животные,🦁,2026-11-22,cigüeña,аист,svg:ciguena\nanimales,Animales,Животные,🦁,2026-11-22,ardilla,белка,🐿️\nanimales,Animales,Животные,🦁,2026-11-22,mono,обезьяна,🐒\nanimales,Animales,Животные,🦁,2026-11-22,burro,осёл,svg:burro\nanimales,Animales,Животные,🦁,2026-11-22,león,лев,🦁\nanimales,Animales,Животные,🦁,2026-11-22,foca,тюлень,🦭\nanimales,Animales,Животные,🦁,2026-11-22,oso,медведь,🐻\nanimales,Animales,Животные,🦁,2026-11-22,pingüino,пингвин,🐧\nanimales,Animales,Животные,🦁,2026-11-22,cebra,зебра,🦓\nanimales,Animales,Животные,🦁,2026-11-22,serpiente,змея,🐍\nanimales,Animales,Животные,🦁,2026-11-22,canguro,кенгуру,🦘\nanimales,Animales,Животные,🦁,2026-11-22,pez,рыба,🐟\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,uva,виноград,🍇\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,pera,груша,🍐\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,coco,кокос,🥥\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,cereza,вишня,🍒\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,sandía,арбуз,🍉\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,limón,лимон,🍋\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,manzana,яблоко,🍎\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,plátano,банан,🍌\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,naranja,апельсин,🍊\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,almendra,миндаль,svg:almendra\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,higo,инжир,svg:higo\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,melocotón,персик,🍑\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,piña,ананас,🍍\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,dátil,финик,svg:datil\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,fresa,клубника,🍓\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,melón,дыня,🍈\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,pepino,огурец,🥒\nfrutas,Frutas,Фрукты и ягоды,🍓,2026-11-22,frambuesa,малина,svg:frambuesa\ncomida,La comida,Еда,🥘,2026-11-22,carne,мясо,🥩\ncomida,La comida,Еда,🥘,2026-11-22,acelga,мангольд,svg:acelga\ncomida,La comida,Еда,🥘,2026-11-22,chocolate,шоколад,🍫\ncomida,La comida,Еда,🥘,2026-11-22,queso,сыр,🧀\ncomida,La comida,Еда,🥘,2026-11-22,aceite,растительное масло,svg:aceite\ncomida,La comida,Еда,🥘,2026-11-22,pescado,рыба (блюдо),svg:pescado\ncomida,La comida,Еда,🥘,2026-11-22,pollo,курица (блюдо),🍗\ncomida,La comida,Еда,🥘,2026-11-22,sopa,суп,🥣\ncomida,La comida,Еда,🥘,2026-11-22,huevo,яйцо,🥚\ncomida,La comida,Еда,🥘,2026-11-22,sal,соль,🧂\ncomida,La comida,Еда,🥘,2026-11-22,arroz,рис,🍚\ncomida,La comida,Еда,🥘,2026-11-22,harina,мука,svg:harina\ncomida,La comida,Еда,🥘,2026-11-22,pan,хлеб,🥖\ncomida,La comida,Еда,🥘,2026-11-22,galletas,печенье,🍪\ncomida,La comida,Еда,🥘,2026-11-22,bocadillo,бутерброд,🥪\ncomida,La comida,Еда,🥘,2026-11-22,cebolla,лук,🧅\ncomida,La comida,Еда,🥘,2026-11-22,ensalada,салат,🥗\ncomida,La comida,Еда,🥘,2026-11-22,espagueti,спагетти,🍝\ncomida,La comida,Еда,🥘,2026-11-22,flan,флан,🍮\ncomida,La comida,Еда,🥘,2026-11-22,gamba,креветка,🦐\ncomida,La comida,Еда,🥘,2026-11-22,guisante,горох,svg:guisante\ncomida,La comida,Еда,🥘,2026-11-22,helado,мороженое,🍦\ncomida,La comida,Еда,🥘,2026-11-22,judía,фасоль,svg:judia\ncomida,La comida,Еда,🥘,2026-11-22,maíz,кукуруза,🌽\ncomida,La comida,Еда,🥘,2026-11-22,macarrones,макароны,svg:macarrones\nprofesiones,Profesiones,Профессии,👷,2026-11-22,albañil,строитель,👷+🧱\nprofesiones,Profesiones,Профессии,👷,2026-11-22,fontanero,сантехник,🧑‍🔧+🚿\nprofesiones,Profesiones,Профессии,👷,2026-11-22,mecánico,механик,🧑‍🔧+🚗\nprofesiones,Profesiones,Профессии,👷,2026-11-22,electricista,электрик,🧑‍🔧+💡\nprofesiones,Profesiones,Профессии,👷,2026-11-22,cartero,почтальон,🧑+✉️\nprofesiones,Profesiones,Профессии,👷,2026-11-22,bombero,пожарный,🧑‍🚒\nprofesiones,Profesiones,Профессии,👷,2026-11-22,pintor,маляр,🧑+🖌️\nprofesiones,Profesiones,Профессии,👷,2026-11-22,cocinera,повар,👩‍🍳\nprofesiones,Profesiones,Профессии,👷,2026-11-22,camarero,официант,🤵+🍽️\nprofesiones,Profesiones,Профессии,👷,2026-11-22,profesor,учитель,🧑‍🏫\nprofesiones,Profesiones,Профессии,👷,2026-11-22,dentista,стоматолог,🧑‍⚕️+🦷\nprofesiones,Profesiones,Профессии,👷,2026-11-22,enfermera,медсестра,👩‍⚕️+💉\nprofesiones,Profesiones,Профессии,👷,2026-11-22,médico,врач,🧑‍⚕️+🩺\nprofesiones,Profesiones,Профессии,👷,2026-11-22,dependienta,продавщица,👩‍💼+🛒\nprofesiones,Profesiones,Профессии,👷,2026-11-22,peluquera,парикмахер,👩+✂️\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,grifo,кран,🚰\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,alicates,плоскогубцы,svg:alicates\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,llave,гаечный ключ,🔧\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,sacacorchos,штопор,svg:sacacorchos\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,pastillas,таблетки,💊\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,cazuela,кастрюля,svg:cazuela\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,paleta,мастерок,svg:paleta\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,martillo,молоток,🔨\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,destornillador,отвёртка,🪛\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,secador,фен,svg:secador\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,carretilla,тачка,svg:carretilla\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,algodón,вата,svg:algodon\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,copa,бокал,🍷\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,rodillo-brocha,валик и кисть,svg:rodillo\nobjetos,Objetos y herramientas,Предметы и инструменты,🔨,2026-11-22,termómetro,термометр,🌡️\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,boca,рот,👄\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,oreja,ухо,👂\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,nariz,нос,👃\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,dientes,зубы,🦷\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,ojo,глаз,👁️\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,cabeza,голова,fig:cabeza\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,cara,лицо,head:cara\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,cuello,шея,fig:cuello\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,pelo,волосы,head:pelo\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,lengua,язык,👅\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,mano,кисть руки,fig:mano\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,brazo,рука,fig:brazo\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,codo,локоть,fig:codo\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,hombro,плечо,fig:hombro\ncuerpo,El cuerpo,Тело,🧍,2026-11-22,pie,ступня,fig:pie\nropa,La ropa,Одежда,👕,2026-11-22,chaqueta,куртка,🧥\nropa,La ropa,Одежда,👕,2026-11-22,camiseta,футболка,👕\nropa,La ropa,Одежда,👕,2026-11-22,camisa,рубашка,👔\nropa,La ropa,Одежда,👕,2026-11-22,cordones,шнурки,svg:cordones\nropa,La ropa,Одежда,👕,2026-11-22,cremallera,молния,svg:cremallera\nropa,La ropa,Одежда,👕,2026-11-22,calcetines,носки,🧦\nropa,La ropa,Одежда,👕,2026-11-22,botas,сапоги,👢\nropa,La ropa,Одежда,👕,2026-11-22,anorac,анорак,svg:anorac\nropa,La ropa,Одежда,👕,2026-11-22,bañador,купальник,🩱\nropa,La ropa,Одежда,👕,2026-11-22,botón,пуговица,svg:boton\nropa,La ropa,Одежда,👕,2026-11-22,sandalias,сандалии,👡\nropa,La ropa,Одежда,👕,2026-11-22,guantes,перчатки,🧤\nropa,La ropa,Одежда,👕,2026-11-22,zapatos,туфли,👞\nropa,La ropa,Одежда,👕,2026-11-22,gorro,шапка,svg:gorro\nropa,La ropa,Одежда,👕,2026-11-22,gafas,очки,👓\nropa,La ropa,Одежда,👕,2026-11-22,sombrero,шляпа,👒\nropa,La ropa,Одежда,👕,2026-11-22,percha,вешалка,svg:percha\nropa,La ropa,Одежда,👕,2026-11-22,vestirse,одеваться,🧍+👕\nropa,La ropa,Одежда,👕,2026-11-22,pantalones,брюки,👖\nropa,La ropa,Одежда,👕,2026-11-22,falda,юбка,svg:falda\nropa,La ropa,Одежда,👕,2026-11-22,cinturón,ремень,svg:cinturon\nropa,La ropa,Одежда,👕,2026-11-22,delantal,фартук,svg:delantal\nropa,La ropa,Одежда,👕,2026-11-22,hebilla,пряжка,svg:hebilla\nropa,La ropa,Одежда,👕,2026-11-22,tirantes,подтяжки,svg:tirantes\nropa,La ropa,Одежда,👕,2026-11-22,abrochar,застёгивать,svg:abrochar\n";
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store={get(k,d){try{const v=localStorage.getItem('pal.'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('pal.'+k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem('pal.'+k)}catch(e){}}};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const fmt=ms=>{const s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+let toastT;const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),2200)};
+
+/* ---------- картинки ---------- */
+const svgWrap=s=>`<svg viewBox="0 0 100 100" aria-hidden="true">${s}</svg>`;
+function art(img,fb){
+  img=(img||'').trim();
+  if(!img)return `<div class="art dim"><span class="emo">${esc(fb||'❓')}</span></div>`;
+  if(img.startsWith('svg:')){const s=SVG[img.slice(4)];if(s)return `<div class="art">${svgWrap(s)}</div>`;return art('',fb)}
+  if(img.startsWith('fig:'))return `<div class="art">${svgWrap(figure(img.slice(4)))}</div>`;
+  if(img.startsWith('head:'))return `<div class="art">${svgWrap(headZoom(img.slice(5)))}</div>`;
+  if(/^(https?:|data:|\.{0,2}\/|img\/)/i.test(img)||/\.(png|jpe?g|webp|gif|svg|avif)(\?.*)?$/i.test(img))
+    return `<div class="art"><img src="${esc(img)}" alt="" data-fb="${esc(fb||'❓')}" loading="lazy"></div>`;
+  if(img.includes('+')){const [a,b]=img.split('+');return `<div class="art"><span class="emo">${esc(a)}</span><span class="badge"><span class="emo">${esc(b)}</span></span></div>`}
+  return `<div class="art"><span class="emo">${esc(img)}</span></div>`;
+}
+document.addEventListener('error',e=>{const t=e.target;if(t.tagName==='IMG'&&t.dataset.fb!=null){const d=t.parentElement;d.classList.add('dim');d.innerHTML=`<span class="emo">${esc(t.dataset.fb)}</span>`}},true);
+
+/* ---------- данные ---------- */
+function parseCSV(text){
+  text=text.replace(/^﻿/,'');const rows=[];let row=[],f='',q=false;
+  const sep=(text.split('\n')[0].match(/;/g)||[]).length>(text.split('\n')[0].match(/,/g)||[]).length?';':',';
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;else if(c===sep){row.push(f);f=''}
+    else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f=''}
+    else f+=c}
+  if(f||row.length){row.push(f);rows.push(row)}
+  return rows.filter(r=>r.some(x=>x.trim()));
+}
+function rowsToDict(rows){
+  if(rows.length<2)throw new Error('В CSV нет строк со словами');
+  const h=rows[0].map(x=>x.trim().toLowerCase()),ix=k=>h.indexOf(k);
+  const I={tid:ix('topic_id'),tes:ix('topic_es'),tru:ix('topic_ru'),tem:ix('topic_emoji'),add:ix('added'),es:ix('es'),ru:ix('ru'),img:ix('image')};
+  if(I.es<0||I.ru<0||(I.tid<0&&I.tes<0))throw new Error('Нужны колонки es, ru и topic_id или topic_es');
+  const topics=new Map();let n=0;
+  for(const r of rows.slice(1)){const g=k=>I[k]<0?'':(r[I[k]]||'').trim();
+    const es=g('es'),ru=g('ru');if(!es||!ru)continue;
+    const tid=g('tid')||g('tes');
+    if(!topics.has(tid))topics.set(tid,{id:tid,es:g('tes')||tid,ru:g('tru')||g('tes')||tid,emoji:g('tem')||'📘',added:g('add'),order:topics.size,words:[]});
+    const t=topics.get(tid);if(!t.added&&g('add'))t.added=g('add');
+    t.words.push({id:tid+'/'+es,es,ru,img:g('img')});n++}
+  if(!n)throw new Error('Не найдено ни одного слова');
+  return [...topics.values()].sort((a,b)=>(b.added||'').localeCompare(a.added||'')||a.order-b.order);
+}
+const csvCell=v=>/[",;\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;
+function dictToCSV(d){const L=['topic_id,topic_es,topic_ru,topic_emoji,added,es,ru,image'];for(const t of d)for(const w of t.words)L.push([t.id,t.es,t.ru,t.emoji,t.added,w.es,w.ru,w.img].map(x=>csvCell(x||'')).join(','));return L.join('\n')}
+let DICT=[],SRC='';
+function setDict(d,src){DICT=d;SRC=src;renderTopics()}
+async function fetchCSV(url){const c=new AbortController(),t=setTimeout(()=>c.abort(),8000);try{const r=await fetch(url,{signal:c.signal,cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);return await r.text()}finally{clearTimeout(t)}}
+async function boot(){
+  const saved=store.get('csv',null),own=store.get('url',''),url=own||(saved?'':CONFIG.CSV_URL);
+  setDict(saved?rowsToDict(parseCSV(saved)):rowsToDict(parseCSV(BUILTIN)),saved?'импортированный словарь':'встроенный словарь');
+  if(url&&location.protocol!=='file:'){try{const txt=await fetchCSV(url);setDict(rowsToDict(parseCSV(txt)),own?'Google-таблица':'словарь сайта (words.csv)');store.set('cache',txt)}
+    catch(e){const c=store.get('cache',null);if(c){try{setDict(rowsToDict(parseCSV(c)),'сохранённая копия таблицы (нет связи)')}catch(_){}}if(own)toast('Таблица недоступна — работаю офлайн')}}
+}
+
+/* ---------- звук и озвучка ---------- */
+let soundOn=store.get('sound',true),ac=null,voice=null;
+function actx(){if(!ac){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ac=new C()}if(ac.state==='suspended')ac.resume();return ac}
+function note(a,f,t,d,type,v,f2){const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.05)}
+function sfx(kind){if(!soundOn)return;const a=actx();if(!a)return;const t=a.currentTime;
+  if(kind==='ok'){note(a,784,t,.35,'sine',.16);note(a,1046.5,t+.08,.4,'sine',.14);note(a,1568,t+.16,.5,'sine',.08)}
+  else if(kind==='bad'){note(a,190,t,.32,'triangle',.28,105);note(a,95,t,.25,'sine',.2)}
+  else{[523,659,784,1046].forEach((f,i)=>note(a,f,t+i*.11,.5,'sine',.12))}}
+function pickVoice(){try{const v=speechSynthesis.getVoices();voice=v.find(x=>x.lang==='es-ES')||v.find(x=>/^es[-_]ES/i.test(x.lang))||v.find(x=>/^es/i.test(x.lang))||null}catch(e){}}
+if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function say(text,force){if((!soundOn&&!force)||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/-/g,' y '));u.lang='es-ES';if(voice)u.voice=voice;u.rate=.88;speechSynthesis.speak(u)}catch(e){}}
+
+/* ---------- секундомер и пауза ---------- */
+const clk={acc:0,since:0,run:false};
+const clkStart=()=>{if(!clk.run){clk.since=performance.now();clk.run=true}};
+const clkStop=()=>{if(clk.run){clk.acc+=performance.now()-clk.since;clk.run=false}};
+const clkReset=()=>{clk.acc=0;clk.since=performance.now()};
+const elapsed=()=>clk.acc+(clk.run?performance.now()-clk.since:0);
+setInterval(()=>{$('#clock').textContent=fmt(elapsed())},250);
+const timers=new Set();
+function later(fn,ms){const t={fn,rem:ms,start:performance.now(),id:0};const go=()=>{t.start=performance.now();t.id=setTimeout(()=>{timers.delete(t);fn()},Math.max(0,t.rem))};t.go=go;timers.add(t);if(!paused)go();return t}
+function clearLater(){for(const t of timers)clearTimeout(t.id);timers.clear()}
+let paused=false;
+function pause(){if(paused||!S.topic||$('#finOv').classList.contains('on'))return;paused=true;clkStop();for(const t of timers){clearTimeout(t.id);t.rem-=performance.now()-t.start}try{speechSynthesis.cancel()}catch(e){}document.body.classList.add('paused');$('#pauseOv').classList.add('on');$('#bPause').innerHTML=IC.play}
+function resume(){if(!paused)return;paused=false;document.body.classList.remove('paused');$('#pauseOv').classList.remove('on');$('#bPause').innerHTML=IC.pause;clkStart();for(const t of timers)t.go()}
+
+/* ---------- навигация ---------- */
+const S={topic:null,mode:'study',idx:0};
+function show(id){$$('.view').forEach(v=>v.classList.toggle('on',v.id===id))}
+function goHome(){clearLater();if(paused){paused=false;document.body.classList.remove('paused');$('#pauseOv').classList.remove('on');$('#bPause').innerHTML=IC.pause}$('#finOv').classList.remove('on');clkStop();S.topic=null;document.body.classList.remove('in-topic');renderTopics();show('vTopics')}
+function openTopic(id,mode){S.topic=DICT.find(t=>t.id===id);if(!S.topic)return;S.idx=0;document.body.classList.add('in-topic');$$('.tName').forEach(e=>e.textContent=S.topic.es);clkReset();clkStart();setMode(mode)}
+function setMode(m){S.mode=m;$$('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===m));clearLater();T.lock=false;$('#arena').classList.remove('locked');
+  if(m==='study'){show('vStudy');renderStudy(0)}else{show('vTrain');startRound()}}
+
+/* ---------- витрина тем ---------- */
+let page=0,perPage=0;
+function renderTopics(){
+  const mq=matchMedia('(min-width:700px)').matches;perPage=mq?4:3;
+  const total=DICT.reduce((s,t)=>s+t.words.length,0);$('#tSum').textContent=`${DICT.length} тем · ${total} слов`;
+  const newest=DICT.reduce((m,t)=>t.added>m?t.added:m,''),allSame=DICT.every(t=>t.added===newest);
+  const best=store.get('best',{});const pages=[];for(let i=0;i<DICT.length;i+=perPage)pages.push(DICT.slice(i,i+perPage));
+  $('#track').innerHTML=pages.map(p=>`<div class="page">${p.map(t=>`<article class="tcard glass">
+    ${!allSame&&t.added===newest?'<span class="new">новое</span>':''}
+    <div class="tart">${esc(t.emoji)}</div>
+    <div class="tinfo"><h2>${esc(t.es)}</h2><p>${esc(t.ru)}</p><div class="meta">${t.words.length} слов${best[t.id]!=null?' · лучший результат '+best[t.id]+'%':''}</div>
+     <div class="prev">${t.words.slice(0,5).map(w=>art(w.img,t.emoji)).join('')}</div></div>
+    <div class="tbtns"><button class="btn" data-open="${esc(t.id)}" data-m="study">📖 Изучение</button><button class="btn solid" data-open="${esc(t.id)}" data-m="train">🎯 Тренировка</button></div>
+   </article>`).join('')}</div>`).join('');
+  $('#dots').innerHTML=pages.map((_,i)=>`<i></i>`).join('');
+  page=Math.min(page,pages.length-1);setPage(page,true);
+}
+function setPage(p,instant){const n=Math.ceil(DICT.length/perPage);page=Math.max(0,Math.min(n-1,p));const tr=$('#track');if(instant){tr.style.transition='none';requestAnimationFrame(()=>tr.style.transition='')}tr.style.transform=`translateX(${-page*100}%)`;$$('#dots i').forEach((d,i)=>d.classList.toggle('on',i===page));$('#pPrev').disabled=page===0;$('#pNext').disabled=page>=n-1}
+$('#pPrev').onclick=()=>setPage(page-1);$('#pNext').onclick=()=>setPage(page+1);
+let swiped=false;
+(()=>{const vp=$('#vp');let x0=null,y0=0;
+ vp.addEventListener('pointerdown',e=>{x0=e.clientX;y0=e.clientY;swiped=false});
+ vp.addEventListener('pointermove',e=>{if(x0==null)return;const dx=e.clientX-x0;if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(e.clientY-y0)){swiped=true;$('#track').style.transform=`translateX(calc(${-page*100}% + ${dx*.6}px))`}});
+ const end=e=>{if(x0==null)return;const dx=e.clientX-x0;x0=null;if(swiped){setPage(page+(dx<-50?1:dx>50?-1:0))}};
+ vp.addEventListener('pointerup',end);vp.addEventListener('pointercancel',()=>{x0=null;setPage(page)});
+ let acc=0,last=0;vp.addEventListener('wheel',e=>{e.preventDefault();const now=Date.now();acc+=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;if(now-last>650&&Math.abs(acc)>40){setPage(page+(acc>0?1:-1));last=now;acc=0}if(now-last>650)acc*=.9},{passive:false});
+ vp.addEventListener('click',e=>{if(swiped){e.stopPropagation();e.preventDefault();swiped=false;return}const b=e.target.closest('[data-open]');if(b){actx();openTopic(b.dataset.open,b.dataset.m)}},true);
+})();
+
+/* ---------- изучение ---------- */
+function fit(el,max,start){let s=start;el.style.fontSize=s+'px';while(el.scrollWidth>max&&s>9){s-=1;el.style.fontSize=s+'px'}}
+function renderStudy(dir){const W=S.topic.words,w=W[S.idx],c=$('#scard');
+  $('#sArt').outerHTML=art(w.img,S.topic.emoji).replace('class="art','id="sArt" class="art');
+  $('#sEs').textContent=w.es;$('#sRu').textContent=w.ru;$('#sCount').textContent=`${S.idx+1} / ${W.length}`;
+  $('#sPrev').disabled=S.idx===0;$('#sNext').disabled=S.idx===W.length-1;$('#sGo').classList.toggle('pulse',S.idx===W.length-1);
+  c.classList.remove('in-l','in-r');void c.offsetWidth;if(dir)c.classList.add(dir>0?'in-r':'in-l');
+  const es=$('#sEs');es.style.fontSize='';const cw=c.clientWidth;fit(es,cw*.86,cw*.13);
+  if(dir)say(w.es)}
+const studyGo=d=>{const n=S.idx+d;if(n<0||n>=S.topic.words.length)return;S.idx=n;renderStudy(d)};
+$('#sPrev').onclick=()=>studyGo(-1);$('#sNext').onclick=()=>studyGo(1);
+$('#sSpeak').onclick=e=>{e.stopPropagation();say(S.topic.words[S.idx].es,true)};
+$('#sGo').onclick=()=>setMode('train');
+(()=>{const c=$('#scard');let x0=null;
+ c.addEventListener('pointerdown',e=>{if(e.target.closest('.speak'))return;x0=e.clientX});
+ c.addEventListener('pointerup',e=>{if(x0==null)return;const dx=e.clientX-x0;x0=null;if(dx<-45)studyGo(1);else if(dx>45)studyGo(-1);else if(Math.abs(dx)<10)say(S.topic.words[S.idx].es,true)});
+ c.addEventListener('pointercancel',()=>x0=null);
+ c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();say(S.topic.words[S.idx].es,true)}});
+})();
+
+/* ---------- тренировка ---------- */
+const T={queue:[],total:0,done:0,missed:new Set(),cur:null,opts:[],lock:false};
+const opts=$$('.opt'),drop=$('#drop');
+function startRound(){clearLater();$('#finOv').classList.remove('on');T.queue=shuffle(S.topic.words.slice());T.total=T.queue.length;T.done=0;T.missed=new Set();clkReset();clkStart();updProg();nextWord()}
+function updProg(){$('#prog').style.width=(T.total?T.done/T.total*100:0)+'%';$('#pc').textContent=`${T.done} / ${T.total}`}
+function nextWord(){
+  opts.forEach(o=>o.classList.remove('good','bad','hint','over'));$('#arena').classList.remove('locked');
+  if(!T.queue.length)return finish();
+  const cur=T.cur=T.queue[0],seen=new Set([cur.ru.toLowerCase()]),others=[];
+  for(const w of shuffle(S.topic.words.filter(w=>w!==cur))){const k=w.ru.toLowerCase();if(!seen.has(k)){seen.add(k);others.push(w)}if(others.length===3)break}
+  T.opts=shuffle([cur,...others]);
+  opts.forEach((o,i)=>{const w=T.opts[i];o.style.visibility=w?'':'hidden';if(w)o.innerHTML=art(w.img,S.topic.emoji)+`<span class="lbl">${esc(w.ru)}</span>`});
+  drop.className='drop';drop.style.setProperty('--dx','0px');drop.style.setProperty('--dy','0px');drop.style.setProperty('--s','1');
+  $('#dropT').textContent=cur.es;fitDrop();void drop.offsetWidth;drop.classList.add('pop');
+  T.lock=false;later(()=>say(cur.es),250)}
+function fitDrop(){const d=drop.clientWidth;fit($('#dropT'),d*.8,d*.24)}
+function choose(i){if(T.lock||paused)return;const w=T.opts[i];if(!w)return;T.lock=true;actx();$('#arena').classList.add('locked');
+  const o=opts[i],ar=$('#arena').getBoundingClientRect(),r=o.getBoundingClientRect();
+  if(w===T.cur){o.classList.add('good');sfx('ok');
+    drop.className='drop fly';drop.style.setProperty('--dx',(r.left+r.width/2-ar.left-ar.width/2)+'px');drop.style.setProperty('--dy',(r.top+r.height*.42-ar.top-ar.height/2)+'px');drop.style.setProperty('--s','.15');
+    later(()=>{T.queue.shift();T.done++;updProg();nextWord()},700)}
+  else{o.classList.add('bad');sfx('bad');T.missed.add(T.cur.id);opts[T.opts.indexOf(T.cur)].classList.add('hint');
+    drop.className='drop back';drop.style.setProperty('--dx','0px');drop.style.setProperty('--dy','0px');
+    later(()=>{T.queue.push(T.queue.shift());nextWord()},5000)}}
+opts.forEach((o,i)=>o.addEventListener('click',()=>choose(i)));
+(()=>{let st=null;
+ const hit=(x,y)=>opts.findIndex((o,i)=>{if(!T.opts[i])return false;const r=o.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom});
+ drop.addEventListener('pointerdown',e=>{if(T.lock||paused)return;e.preventDefault();actx();drop.setPointerCapture(e.pointerId);st={x:e.clientX,y:e.clientY,moved:false};drop.className='drop drag'});
+ drop.addEventListener('pointermove',e=>{if(!st)return;const dx=e.clientX-st.x,dy=e.clientY-st.y;if(Math.hypot(dx,dy)>6)st.moved=true;drop.style.setProperty('--dx',dx+'px');drop.style.setProperty('--dy',dy+'px');const h=hit(e.clientX,e.clientY);opts.forEach((o,i)=>o.classList.toggle('over',i===h))});
+ const up=e=>{if(!st)return;const s=st;st=null;opts.forEach(o=>o.classList.remove('over'));const h=hit(e.clientX,e.clientY);
+  if(s.moved&&h>=0)choose(h);else{drop.className='drop back';drop.style.setProperty('--dx','0px');drop.style.setProperty('--dy','0px');if(!s.moved)say(T.cur.es,true)}};
+ drop.addEventListener('pointerup',up);drop.addEventListener('pointercancel',up);
+ drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();say(T.cur.es,true)}});
+})();
+function finish(){clkStop();const acc=Math.round((T.total-T.missed.size)/T.total*100),t=elapsed();sfx('win');
+  const best=store.get('best',{});if(best[S.topic.id]==null||acc>best[S.topic.id]){best[S.topic.id]=acc;store.set('best',best)}
+  $('#fTopic').textContent=`${S.topic.es} · ${S.topic.ru} · ${T.total} слов`;$('#fTime').textContent=fmt(t);$('#fAcc').textContent=acc+'%';
+  const miss=S.topic.words.filter(w=>T.missed.has(w.id));
+  $('#fMiss').innerHTML=miss.length?`<p class="note" style="margin-top:6px">Стоит повторить:</p><div class="chips">${miss.map(w=>`<span>${esc(w.es)} — ${esc(w.ru)}</span>`).join('')}</div>`:'<p class="note">Все слова — с первой попытки!</p>';
+  $('#finOv').classList.add('on')}
+$('#fAgain').onclick=()=>startRound();$('#fStudy').onclick=()=>{$('#finOv').classList.remove('on');setMode('study')};
+
+/* ---------- шапка и клавиатура ---------- */
+$$('.seg button').forEach(b=>b.onclick=()=>{if(b.dataset.mode!==S.mode||b.dataset.mode==='train')setMode(b.dataset.mode)});
+$('#bBack').onclick=goHome;$$('[data-home]').forEach(b=>b.onclick=goHome);
+$('#bPause').onclick=()=>paused?resume():pause();$('#bResume').onclick=resume;
+$('#bPause').innerHTML=IC.pause;
+const sndIcon=()=>$('#bSound').textContent=soundOn?'🔊':'🔇';sndIcon();
+$('#bSound').onclick=()=>{soundOn=!soundOn;store.set('sound',soundOn);sndIcon();if(!soundOn)try{speechSynthesis.cancel()}catch(e){};toast(soundOn?'Звук и озвучка включены':'Звук выключен')};
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.topic)pause()});
+document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea'))return;
+  if(e.key==='Escape'){if($('#dict').classList.contains('on'))closeDict();else if(S.topic)paused?resume():pause();return}
+  if(!S.topic||paused)return;
+  if(S.mode==='study'){if(e.key==='ArrowRight')studyGo(1);if(e.key==='ArrowLeft')studyGo(-1)}
+  else if(/^[1-4]$/.test(e.key))choose(+e.key-1)});
+addEventListener('keydown',e=>{if(!S.topic&&!e.target.matches('input,textarea')&&!$('#dict').classList.contains('on')){if(e.key==='ArrowRight')setPage(page+1);if(e.key==='ArrowLeft')setPage(page-1)}});
+let rT;addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(()=>{const pp=matchMedia('(min-width:700px)').matches?4:3;if(pp!==perPage){const first=page*perPage;perPage=pp;page=Math.floor(first/pp);renderTopics()}if(S.topic&&S.mode==='train')fitDrop();if(S.topic&&S.mode==='study'){const c=$('#scard');fit($('#sEs'),c.clientWidth*.86,c.clientWidth*.13)}},120)});
+
+/* ---------- словарь ---------- */
+const msg=(t,bad)=>{const m=$('#dMsg');m.textContent=t;m.style.color=bad?'#ffd0d5':''};
+const dictInfo=()=>{const n=DICT.reduce((s,t)=>s+t.words.length,0);$('#dSrc').textContent=`Сейчас: ${SRC} · ${DICT.length} тем · ${n} слов`};
+$('#bDict').onclick=()=>{$('#dUrl').value=store.get('url','');dictInfo();msg('');$('#dict').classList.add('on')};
+const closeDict=()=>$('#dict').classList.remove('on');$('#dClose').onclick=closeDict;
+$('#dLoad').onclick=async()=>{const u=$('#dUrl').value.trim();if(!u)return msg('Вставьте ссылку на CSV',1);msg('Загружаю…');
+  try{const txt=await fetchCSV(u);const d=rowsToDict(parseCSV(txt));store.set('url',u);store.set('cache',txt);setDict(d,'Google-таблица');dictInfo();msg(`Готово: ${d.length} тем загружено`)}
+  catch(e){msg('Не удалось загрузить: '+(e.name==='AbortError'?'нет ответа':e.message)+'. На claude.ai внешние ссылки заблокированы — используйте вставку CSV ниже.',1)}};
+$('#dUnlink').onclick=()=>{store.del('url');store.del('cache');$('#dUrl').value='';msg('Ссылка отвязана')};
+function applyCSV(txt,label){try{const d=rowsToDict(parseCSV(txt));store.set('csv',txt);setDict(d,label);dictInfo();msg(`Словарь заменён: ${d.length} тем`)}catch(e){msg(e.message,1)}}
+$('#dApply').onclick=()=>applyCSV($('#dCsv').value,'импортированный словарь');
+$('#dFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('#dCsv').value=r.result;applyCSV(r.result,'импортированный словарь')};r.readAsText(f,'utf-8');e.target.value=''};
+$('#qAdd').onclick=()=>{const tes=$('#qEs').value.trim(),tru=$('#qRu').value.trim()||tes,em=$('#qEm').value.trim()||'📘';if(!tes)return msg('Укажите название темы',1);
+  const words=$('#qList').value.split('\n').map(l=>l.replace(/^\s*[*•\-–]\s+/,'').trim()).filter(Boolean).map(l=>{const p=l.split(/\s+[—–-]\s+|\t|;|=/);if(p.length<2)return null;let es=p[0].trim();if(es===es.toUpperCase())es=es.toLowerCase();return{es,ru:p.slice(1).join(' ').trim()}}).filter(Boolean);
+  if(words.length<2)return msg('Нужно хотя бы 2 строки вида «MESA — стол»',1);
+  const id=tes.toLowerCase().replace(/[^a-zа-яё0-9]+/gi,'-')+'-'+Date.now().toString(36).slice(-4),today=new Date().toISOString().slice(0,10);
+  const d=[{id,es:tes,ru:tru,emoji:em,added:today,order:-1,words:words.map(w=>({id:id+'/'+w.es,es:w.es,ru:w.ru,img:''}))},...DICT];
+  store.set('csv',dictToCSV(d));setDict(d,'импортированный словарь');setPage(0);dictInfo();msg(`Тема «${tes}» добавлена первой: ${words.length} слов. Картинки можно добавить через колонку image.`);$('#qList').value=''};
+$('#dReset').onclick=()=>{store.del('csv');store.del('url');store.del('cache');setDict(rowsToDict(parseCSV(BUILTIN)),'встроенный словарь');dictInfo();msg('Встроенный словарь восстановлен')};
+$('#dCopy').onclick=async()=>{const txt=dictToCSV(DICT);try{await navigator.clipboard.writeText(txt);msg('CSV скопирован — вставьте его в Google-таблицу (ячейка A1)')}catch(e){const o=$('#dOut');o.hidden=false;o.value=txt;o.focus();o.select();msg('Скопируйте текст из поля вручную')}};
+$('#dGal').onclick=()=>{$('#galGrid').innerHTML=DICT.map(t=>`<h3>${esc(t.emoji)} ${esc(t.es)} · ${esc(t.ru)}</h3>`+t.words.map(w=>`<div>${art(w.img,t.emoji)}${esc(w.es)}<br><span style="opacity:.8;font-weight:600">${esc(w.ru)}</span></div>`).join('')).join('');$('#gal').classList.add('on')};
+$('#gClose').onclick=()=>$('#gal').classList.remove('on');
+
+show('vTopics');boot().catch(e=>{console.error(e);setDict(rowsToDict(parseCSV(BUILTIN)),'встроенный словарь')});
+window.__pal={S,T,DICT:()=>DICT,choose,openTopic};
+}
+</script>
+</body>
+</html>
