@@ -209,6 +209,7 @@ body.paused *{animation-play-state:paused!important}
 
 <div class="ov" id="dict"><div class="panel glass">
  <h2>Словарь</h2><p class="note" id="dSrc"></p>
+ <p class="note">Статистика: дата, тема, время, число слов и ошибок и класс устройства (телефон, планшет или компьютер). Имя и IP не собираются. Данные хранятся на этом устройстве; в таблицу отправляются только при подключённом преподавателем адресе.</p>
  <details open><summary>Google-таблица по ссылке (CSV)</summary>
   <label for="dUrl">Ссылка «Опубликовать в интернете → CSV»</label>
   <input id="dUrl" type="url" placeholder="https://docs.google.com/spreadsheets/d/e/…/pub?output=csv" autocomplete="off">
@@ -241,7 +242,7 @@ body.paused *{animation-play-state:paused!important}
 {
 /*__ART__*/
 const IC={pause:'<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.6" height="12" rx="1.2" fill="currentColor"/><rect x="9.4" y="2" width="3.6" height="12" rx="1.2" fill="currentColor"/></svg>',play:'<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg>'};
-const CONFIG={CSV_URL:'words.csv'}; // словарь рядом с сайтом; можно заменить ссылкой на опубликованную Google-таблицу (CSV)
+const CONFIG={CSV_URL:'words.csv',STATS_URL:''}; // адрес Apps Script для записи статистики; пусто = не отправлять // словарь рядом с сайтом; можно заменить ссылкой на опубликованную Google-таблицу (CSV)
 const BUILTIN=/*__CSV__*/;
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -389,9 +390,9 @@ $('#sGo').onclick=()=>setMode('train');
 })();
 
 /* ---------- тренировка ---------- */
-const T={queue:[],total:0,done:0,missed:new Set(),cur:null,opts:[],lock:false};
+const T={queue:[],total:0,done:0,missed:new Set(),cur:null,opts:[],lock:false,errs:0};
 const opts=$$('.opt'),drop=$('#drop');
-function startRound(){clearLater();$('#finOv').classList.remove('on');T.queue=shuffle(S.topic.words.slice());T.total=T.queue.length;T.done=0;T.missed=new Set();clkReset();clkStart();updProg();nextWord()}
+function startRound(){clearLater();$('#finOv').classList.remove('on');T.queue=shuffle(S.topic.words.slice());T.total=T.queue.length;T.done=0;T.missed=new Set();T.errs=0;clkReset();clkStart();updProg();nextWord()}
 function updProg(){$('#prog').style.width=(T.total?T.done/T.total*100:0)+'%';$('#pc').textContent=`${T.done} / ${T.total}`}
 function nextWord(){
   opts.forEach(o=>o.classList.remove('good','bad','hint','over'));$('#arena').classList.remove('locked');
@@ -409,7 +410,7 @@ function choose(i){if(T.lock||paused)return;const w=T.opts[i];if(!w)return;T.loc
   if(w===T.cur){o.classList.add('good');sfx('ok');
     drop.className='drop fly';drop.style.setProperty('--dx',(r.left+r.width/2-ar.left-ar.width/2)+'px');drop.style.setProperty('--dy',(r.top+r.height*.42-ar.top-ar.height/2)+'px');drop.style.setProperty('--s','.15');
     later(()=>{T.queue.shift();T.done++;updProg();nextWord()},700)}
-  else{o.classList.add('bad');sfx('bad');T.missed.add(T.cur.id);opts[T.opts.indexOf(T.cur)].classList.add('hint');
+  else{o.classList.add('bad');sfx('bad');T.errs++;T.missed.add(T.cur.id);opts[T.opts.indexOf(T.cur)].classList.add('hint');
     drop.className='drop back';drop.style.setProperty('--dx','0px');drop.style.setProperty('--dy','0px');
     later(()=>{T.queue.push(T.queue.shift());nextWord()},5000)}}
 opts.forEach((o,i)=>o.addEventListener('click',()=>choose(i)));
@@ -422,10 +423,22 @@ opts.forEach((o,i)=>o.addEventListener('click',()=>choose(i)));
  drop.addEventListener('pointerup',up);drop.addEventListener('pointercancel',up);
  drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();say(T.cur.es,true)}});
 })();
+/* ---------- статистика сессии ----------
+   Пишется только класс устройства, тема, режим, время, число слов и ошибок.
+   Имя, IP, модель устройства и отпечатки браузера не собираются.
+   Всё сохраняется на этом устройстве; в таблицу уходит только при заданном STATS_URL. */
+function deviceClass(){const w=innerWidth;return w<700?'телефон':w<1100?'планшет':'компьютер'}
+function logSession(acc,ms,missWords){
+  const d=new Date(),rec={date:d.toISOString().slice(0,10),time:d.toTimeString().slice(0,5),topic:S.topic.es,mode:'тренировка',
+    seconds:Math.round(ms/1000),words:T.total,first_try:T.total-T.missed.size,errors:T.errs,accuracy:acc,
+    error_words:missWords.map(w=>w.es).join(', '),device:deviceClass()};
+  const log=store.get('log',[]);log.push(rec);store.set('log',log.slice(-300));
+  if(CONFIG.STATS_URL){try{fetch(CONFIG.STATS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(rec)}).catch(()=>{})}catch(e){}}
+}
 function finish(){clkStop();const acc=Math.round((T.total-T.missed.size)/T.total*100),t=elapsed();sfx('win');
   const best=store.get('best',{});if(best[S.topic.id]==null||acc>best[S.topic.id]){best[S.topic.id]=acc;store.set('best',best)}
   $('#fTopic').textContent=`${S.topic.es} · ${S.topic.ru} · ${T.total} слов`;$('#fTime').textContent=fmt(t);$('#fAcc').textContent=acc+'%';
-  const miss=S.topic.words.filter(w=>T.missed.has(w.id));
+  const miss=S.topic.words.filter(w=>T.missed.has(w.id));logSession(acc,t,miss);
   $('#fMiss').innerHTML=miss.length?`<p class="note" style="margin-top:6px">Стоит повторить:</p><div class="chips">${miss.map(w=>`<span>${esc(w.es)} — ${esc(w.ru)}</span>`).join('')}</div>`:'<p class="note">Все слова — с первой попытки!</p>';
   $('#finOv').classList.add('on')}
 $('#fAgain').onclick=()=>startRound();$('#fStudy').onclick=()=>{$('#finOv').classList.remove('on');setMode('study')};
