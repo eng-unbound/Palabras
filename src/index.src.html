@@ -242,7 +242,7 @@ body.paused *{animation-play-state:paused!important}
 {
 /*__ART__*/
 const IC={pause:'<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.6" height="12" rx="1.2" fill="currentColor"/><rect x="9.4" y="2" width="3.6" height="12" rx="1.2" fill="currentColor"/></svg>',play:'<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg>'};
-const CONFIG={CSV_URL:'words.csv',STATS_URL:''}; // адрес Apps Script для записи статистики; пусто = не отправлять // словарь рядом с сайтом; можно заменить ссылкой на опубликованную Google-таблицу (CSV)
+const CONFIG={CSV_URL:'words.csv',STATS_URL:'',STATS_KEY:'fS0kYLMXJrXSkJ5bg81CiISi'}; // адрес Apps Script для записи статистики; пусто = не отправлять // словарь рядом с сайтом; можно заменить ссылкой на опубликованную Google-таблицу (CSV)
 const BUILTIN=/*__CSV__*/;
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -433,7 +433,7 @@ function logSession(acc,ms,missWords){
     seconds:Math.round(ms/1000),words:T.total,first_try:T.total-T.missed.size,errors:T.errs,accuracy:acc,
     error_words:missWords.map(w=>w.es).join(', '),device:deviceClass()};
   const log=store.get('log',[]);log.push(rec);store.set('log',log.slice(-300));
-  if(CONFIG.STATS_URL){try{fetch(CONFIG.STATS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(rec)}).catch(()=>{})}catch(e){}}
+  if(CONFIG.STATS_URL){try{fetch(CONFIG.STATS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({...rec,key:CONFIG.STATS_KEY})}).catch(()=>{})}catch(e){}}
 }
 function finish(){clkStop();const acc=Math.round((T.total-T.missed.size)/T.total*100),t=elapsed();sfx('win');
   const best=store.get('best',{});if(best[S.topic.id]==null||acc>best[S.topic.id]){best[S.topic.id]=acc;store.set('best',best)}
