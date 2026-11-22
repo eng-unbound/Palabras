@@ -210,6 +210,12 @@ body.paused *{animation-play-state:paused!important}
 <div class="ov" id="dict"><div class="panel glass">
  <h2>Словарь</h2><p class="note" id="dSrc"></p>
  <p class="note">Статистика: дата, тема, время, число слов и ошибок и класс устройства (телефон, планшет или компьютер). Имя и IP не собираются. Данные хранятся на этом устройстве; в таблицу отправляются только при подключённом преподавателем адресе.</p>
+ <details id="stBox"><summary>📊 Моя статистика</summary>
+  <div id="stSum" class="chips" style="margin:8px 0"></div>
+  <div id="stList" style="max-height:260px;overflow:auto;margin-top:6px"></div>
+  <div class="row"><button class="btn" id="stClear">Очистить на этом устройстве</button></div>
+  <p class="note">Эти записи хранятся только в этом браузере. В таблицу они попадают отдельно, если она подключена.</p>
+ </details>
  <details open><summary>Google-таблица по ссылке (CSV)</summary>
   <label for="dUrl">Ссылка «Опубликовать в интернете → CSV»</label>
   <input id="dUrl" type="url" placeholder="https://docs.google.com/spreadsheets/d/e/…/pub?output=csv" autocomplete="off">
@@ -462,7 +468,19 @@ let rT;addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(()=>{const 
 /* ---------- словарь ---------- */
 const msg=(t,bad)=>{const m=$('#dMsg');m.textContent=t;m.style.color=bad?'#ffd0d5':''};
 const dictInfo=()=>{const n=DICT.reduce((s,t)=>s+t.words.length,0);$('#dSrc').textContent=`Сейчас: ${SRC} · ${DICT.length} тем · ${n} слов`};
-$('#bDict').onclick=()=>{$('#dUrl').value=store.get('url','');dictInfo();msg('');$('#dict').classList.add('on')};
+function renderStats(){
+  const log=store.get('log',[]),n=log.length;
+  const words=log.reduce((s,r)=>s+r.words,0),err=log.reduce((s,r)=>s+r.errors,0),ft=log.reduce((s,r)=>s+r.first_try,0);
+  const acc=n?Math.round(log.reduce((s,r)=>s+r.accuracy,0)/n):0;
+  $('#stSum').innerHTML=n?`<span>сессий: ${n}</span><span>слов: ${words}</span><span>с первой попытки: ${words?Math.round(ft/words*100):0}%</span><span>ошибок: ${err}</span><span>средняя точность: ${acc}%</span>`:'<span>Пока нет записей</span>';
+  $('#stList').innerHTML=log.slice().reverse().map(r=>`<div class="glass" style="padding:10px 12px;margin:6px 0;border-radius:16px;font-size:14px;line-height:1.4">
+    <b>${esc(r.topic)}</b> · ${esc(r.date)} ${esc(r.time)}<br>
+    ${fmt(r.seconds*1000)} · слов ${r.words} · ошибок ${r.errors} · точность ${r.accuracy}% · ${esc(r.device)}
+    ${r.error_words?`<br><span style="opacity:.85">ошибки: ${esc(r.error_words)}</span>`:''}</div>`).join('');
+  $('#stClear').textContent='Очистить на этом устройстве';$('#stClear').dataset.armed='';
+}
+$('#stClear').onclick=e=>{const b=e.currentTarget;if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent='Нажмите ещё раз, чтобы удалить';return}store.del('log');renderStats();toast('Статистика на этом устройстве очищена')};
+$('#bDict').onclick=()=>{$('#dUrl').value=store.get('url','');dictInfo();msg('');renderStats();$('#dict').classList.add('on')};
 const closeDict=()=>$('#dict').classList.remove('on');$('#dClose').onclick=closeDict;
 $('#dLoad').onclick=async()=>{const u=$('#dUrl').value.trim();if(!u)return msg('Вставьте ссылку на CSV',1);msg('Загружаю…');
   try{const txt=await fetchCSV(u);const d=rowsToDict(parseCSV(txt));store.set('url',u);store.set('cache',txt);setDict(d,'Google-таблица');dictInfo();msg(`Готово: ${d.length} тем загружено`)}
