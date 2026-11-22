@@ -147,3 +147,71 @@ ropa,La ropa,Одежда,👕,2026-11-22,delantal,фартук,svg:delantal
 ropa,La ropa,Одежда,👕,2026-11-22,hebilla,пряжка,svg:hebilla
 ropa,La ropa,Одежда,👕,2026-11-22,tirantes,подтяжки,svg:tirantes
 ropa,La ropa,Одежда,👕,2026-11-22,abrochar,застёгивать,svg:abrochar
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,tenedor,вилка,svg:tenedor
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,cuchara,ложка,🥄
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,cuchillo,нож,🔪
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,beber,пить,🧑+🥤
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,comer,кушать,😋
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,taza,чашка,☕
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,plato,тарелка,svg:plato
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,cocina,плита,svg:cocina
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,nevera,холодильник,svg:nevera
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,lavadora,стиральная машина,svg:lavadora
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,inodoro,унитаз,🚽
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,toalla,полотенце,svg:toalla
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,espejo,зеркало,🪞
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,lavabo,раковина,svg:lavabo
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,lavarse,умываться,🧑+💦
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,peine,расчёска,svg:peine
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,peinarse,причёсываться,svg:peinarse
+cocina,Cocina y baño,Кухня и ванная,🚿,2026-11-01,jabón,мыло,🧼
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,ventana,окно,🪟
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,puerta,дверь,🚪
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,librería,книжный шкаф,svg:libreria
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,enchufe,розетка,svg:enchufe
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,lámpara,лампа,svg:lampara
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,silla,стул,🪑
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,sillón,кресло,svg:sillon
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,mesa,стол,svg:mesa
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,planta,растение,🪴
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,televisor,телевизор,📺
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,cama,кровать,🛏️
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,sábana,простыня,svg:sabana
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,almohada,подушка,svg:almohada
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,despertador,будильник,⏰
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,dormir,спать,😴
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,cuna,детская кроватка,svg:cuna
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,mesilla,тумбочка,svg:mesilla
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,cajón,ящик,svg:cajon
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,armario,шкаф,svg:armario
+casa,Casa y dormitorio,Дом и спальня,🛏️,2026-11-01,maleta,чемодан,🧳
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,goma,ластик,svg:goma
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,boli,ручка,🖊️
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,lápiz,карандаш,✏️
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,rotulador,фломастер,svg:rotulador
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,mochila,рюкзак,🎒
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,borrador,губка для доски,svg:borrador
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,libro,книга,📖
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,estuche,пенал,svg:estuche
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,tajador,точилка,svg:tajador
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,tijeras,ножницы,✂️
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,pizarra,доска,svg:pizarra
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,regla,линейка,📏
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,pincel,кисть,🖌️
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,pegamento,клей,svg:pegamento
+escuela,Escuela y materiales,Школа и канцтовары,🎒,2026-11-01,papelera,корзина,🗑️
+colores,Colores,Основные цвета,🎨,2026-11-01,rojo,красный,color:#e53935
+colores,Colores,Основные цвета,🎨,2026-11-01,azul,синий,color:#1e5fd6
+colores,Colores,Основные цвета,🎨,2026-11-01,amarillo,жёлтый,color:#ffd31a
+colores,Colores,Основные цвета,🎨,2026-11-01,verde,зелёный,color:#2fa84f
+colores,Colores,Основные цвета,🎨,2026-11-01,naranja,оранжевый,color:#ff8a1e
+colores,Colores,Основные цвета,🎨,2026-11-01,morado,фиолетовый,color:#8e44ad
+colores,Colores,Основные цвета,🎨,2026-11-01,rosa,розовый,color:#ff7eb6
+colores,Colores,Основные цвета,🎨,2026-11-01,marrón,коричневый,color:#8b5a2b
+colores,Colores,Основные цвета,🎨,2026-11-01,negro,чёрный,color:#222222
+colores,Colores,Основные цвета,🎨,2026-11-01,blanco,белый,color:#ffffff
+colores,Colores,Основные цвета,🎨,2026-11-01,gris,серый,color:#9aa3ab
+colores,Colores,Основные цвета,🎨,2026-11-01,celeste,голубой,color:#86d4ff
+colores,Colores,Основные цвета,🎨,2026-11-01,turquesa,бирюзовый,color:#14b8a6
+colores,Colores,Основные цвета,🎨,2026-11-01,dorado,золотой,color:#d4a017
+colores,Colores,Основные цвета,🎨,2026-11-01,plateado,серебряный,color:#c0c7cf

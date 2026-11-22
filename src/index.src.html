@@ -229,7 +229,7 @@ body.paused *{animation-play-state:paused!important}
  </details>
  <p class="msg" id="dMsg" role="status"></p>
  <div class="row"><button class="btn" id="dCopy">📋 Скопировать CSV</button><button class="btn" id="dGal">🖼 Все картинки</button><button class="btn" id="dReset">↺ Встроенный словарь</button></div>
- <p class="note">Колонки: <code>topic_id, topic_es, topic_ru, topic_emoji, added, es, ru, image</code>. Темы с более свежей датой <code>added</code> идут первыми. В <code>image</code>: эмодзи, <code>svg:имя</code>, <code>fig:часть</code>, комбинация <code>🧑‍🔧+🚗</code>, путь к файлу <code>img/…webp</code> или ссылка на картинку.</p>
+ <p class="note">Колонки: <code>topic_id, topic_es, topic_ru, topic_emoji, added, es, ru, image</code>. Темы с более свежей датой <code>added</code> идут первыми. В <code>image</code>: эмодзи, <code>svg:имя</code>, <code>fig:часть</code>, <code>color:#e53935</code>, комбинация <code>🧑‍🔧+🚗</code>, путь к файлу <code>img/…webp</code> или ссылка на картинку.</p>
  <textarea id="dOut" hidden readonly></textarea>
  <div class="row" style="justify-content:flex-end"><button class="btn solid" id="dClose">Готово</button></div>
 </div></div>
@@ -257,6 +257,7 @@ function art(img,fb){
   if(!img)return `<div class="art dim"><span class="emo">${esc(fb||'❓')}</span></div>`;
   if(img.startsWith('svg:')){const s=SVG[img.slice(4)];if(s)return `<div class="art">${svgWrap(s)}</div>`;return art('',fb)}
   if(img.startsWith('fig:'))return `<div class="art">${svgWrap(figure(img.slice(4)))}</div>`;
+  if(img.startsWith('color:'))return `<div class="art">${svgWrap(swatch(img.slice(6).trim()))}</div>`;
   if(img.startsWith('head:'))return `<div class="art">${svgWrap(headZoom(img.slice(5)))}</div>`;
   if(/^(https?:|data:|\.{0,2}\/|img\/)/i.test(img)||/\.(png|jpe?g|webp|gif|svg|avif)(\?.*)?$/i.test(img))
     return `<div class="art"><img src="${esc(img)}" alt="" data-fb="${esc(fb||'❓')}" loading="lazy"></div>`;
