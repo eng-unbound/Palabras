@@ -427,9 +427,12 @@ function sfx(kind){if(!soundOn)return;const a=actx();if(!a)return;const t=a.curr
 function pickVoice(){try{const v=speechSynthesis.getVoices();voice=v.find(x=>/^es[-_]ES$/i.test(x.lang))||v.find(x=>/^es[-_]/i.test(x.lang))||null}catch(e){voice=null}}
 let noVoiceWarned=false;
 if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+/* Текст для озвучки: в кастильском «ll» звучит как «й» (gallo — «гайо»), а многие голоса читают её как «л».
+   На экране слово не меняется, меняется только то, что произносит браузер. */
+function ttsText(t){return t.replace(/ll/gi,m=>m[0]==='L'?'Y':'y').replace(/-/g,' y ')}
 function say(text,force){if((!soundOn&&!force)||!('speechSynthesis' in window))return;
   if(!voice){pickVoice();if(!voice){if(!noVoiceWarned){noVoiceWarned=true;toast('На этом устройстве нет испанского голоса. Добавьте его в настройках речи')}return}}
-  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/-/g,' y '));u.lang='es-ES';if(voice)u.voice=voice;u.rate=.88;speechSynthesis.speak(u)}catch(e){}}
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(ttsText(text));u.lang='es-ES';if(voice)u.voice=voice;u.rate=.88;speechSynthesis.speak(u)}catch(e){}}
 
 /* ---------- секундомер и пауза ---------- */
 const clk={acc:0,since:0,run:false};
